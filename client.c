@@ -25,7 +25,7 @@ void setup_socket()
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(PORT);
-    server_address.sin_addr.s_addr = inet_addr(ADDRESS); //use when we actually get an IP
+    //server_address.sin_addr.s_addr = inet_addr(ADDRESS); //use when we actually get an IP
     server_address.sin_addr.s_addr = INADDR_ANY; //use for debug purposes
 
     if (connect(network_socket,(struct sockaddr *) &server_address,sizeof(server_address)) < 0)
