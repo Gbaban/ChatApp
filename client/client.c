@@ -67,7 +67,7 @@ void signup()
     char username[30];
     char password[30];
     char repeated_password[30];
-    
+
     do
     {
         printf("Username: ");
@@ -77,7 +77,7 @@ void signup()
             printf("Username should be lower than 30 characters\n");
         }
     } while (strlen(username) >= 30);
-    
+
     do
     {
         printf("Password: ");
@@ -87,7 +87,7 @@ void signup()
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(password) >= 30);
-    
+
     do
     {
         printf("Repeat password: ");
@@ -97,7 +97,7 @@ void signup()
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(repeated_password) >= 30);
-    
+
     if (!strcmp(password,repeated_password))
     {
         //TODO send username and password to server to be added to database
@@ -112,7 +112,7 @@ void login()
 {
     char username[30];
     char password[30];
-    
+
     do
     {
         printf("Username: ");
@@ -122,7 +122,7 @@ void login()
             printf("Username should be lower than 30 characters\n");
         }
     } while (strlen(username) >= 30);
-    
+
     do
     {
         printf("Password: ");
@@ -132,7 +132,7 @@ void login()
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(password) >= 30);
-    
+
     //TODO send username and password to server for authentication
 }
 
@@ -159,7 +159,7 @@ void menu()
 
 int main()
 {
-    
+
     setup_socket();
     print_header();
     menu();

@@ -18,7 +18,7 @@ void *handle_connection(void *vargp)
     char client_response[256];
     if (recv(client_socket,client_response,sizeof(client_response),0) < 0)
     {
-            printf("Error recieving data from clientn");
+            printf("Error recieving data from client\n");
             exit(1);
     }
 

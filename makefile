@@ -1,4 +1,4 @@
-server: server/server_stub.c server/utility_server.c server/connection_management_server.c client.o
+server: server/server_stub.o client.o
 	gcc -o server/server_stub server/server_stub.c server/utility_server.c server/connection_management_server.c -lpthread
 
 client.o: client/client.c
