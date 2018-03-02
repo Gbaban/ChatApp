@@ -18,7 +18,7 @@ void *handle_connection(void *vargp)
     char client_response[256];
     if (recv(client_socket,client_response,sizeof(client_response),0) < 0)
     {
-            printf("Error recieving data from client\n");
+            printf("Error recieving data from clientn");
             exit(1);
     }
 
@@ -26,7 +26,7 @@ void *handle_connection(void *vargp)
     //trimite raspunsul la toate socket-urile---de avut grija cand clientul va functiona
     //sa nu mai trimitem inapoi mesajul si acelui client care l-a trimis
     //ca va fi afisat in consola lui de 2 ori
-    printf("The client sent the following data: %s %d\n",client_response,nr);
+    printf("The client sent the following data here: %s %d\n",client_response,nr);
     sprintf(server_message,"%s %d\n",server_message,nr);
     int i=0;
     for(;i<client_sockets_dimension;i++)
