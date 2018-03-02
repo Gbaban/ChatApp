@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -40,7 +41,7 @@ void setup_socket()
 
     // oti: vezi ca aici eu am pus bucla de while(1)....sterge-o daca te deranjeaza doar ca am vrut sa o testez la mine
 
-    while(1){
+    //while(1){
     char server_response[256];
     if (recv(network_socket,server_response,sizeof(server_response),0) < 0)
     {
@@ -50,7 +51,7 @@ void setup_socket()
 
     //print out the server's response
     printf("The server sent the data: %s\n",server_response);
-    }
+    //}
 }
 
 void print_header()
@@ -63,12 +64,76 @@ void print_header()
 
 void signup()
 {
-    printf("In signup function\n");
+    char username[30];
+    char password[30];
+    char repeated_password[30];
+    
+    do
+    {
+        printf("Username: ");
+        scanf("%99s",username);
+        if (strlen(username) >= 30)
+        {
+            printf("Username should be lower than 30 characters\n");
+        }
+    } while (strlen(username) >= 30);
+    
+    do
+    {
+        printf("Password: ");
+        scanf("%99s",password);
+        if (strlen(username) >= 30)
+        {
+            printf("Password should be lower than 30 characters\n");
+        }
+    } while (strlen(password) >= 30);
+    
+    do
+    {
+        printf("Repeat password: ");
+        scanf("%99s",repeated_password);
+        if (strlen(username) >= 30)
+        {
+            printf("Password should be lower than 30 characters\n");
+        }
+    } while (strlen(repeated_password) >= 30);
+    
+    if (!strcmp(password,repeated_password))
+    {
+        //TODO send username and password to server to be added to database
+    }
+    else
+    {
+        printf("The repeated password must be identical to the original!\n");
+    }
 }
 
 void login()
 {
-    printf("In login function\n");
+    char username[30];
+    char password[30];
+    
+    do
+    {
+        printf("Username: ");
+        scanf("%99s",username);
+        if (strlen(username) >= 30)
+        {
+            printf("Username should be lower than 30 characters\n");
+        }
+    } while (strlen(username) >= 30);
+    
+    do
+    {
+        printf("Password: ");
+        scanf("%99s",password);
+        if (strlen(username) >= 30)
+        {
+            printf("Password should be lower than 30 characters\n");
+        }
+    } while (strlen(password) >= 30);
+    
+    //TODO send username and password to server for authentication
 }
 
 void menu()
@@ -94,9 +159,11 @@ void menu()
 
 int main()
 {
+    
     setup_socket();
     print_header();
     menu();
+    //TODO main chat logic goes here
     close(network_socket);
     return 0;
 }
