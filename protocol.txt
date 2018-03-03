@@ -1,0 +1,28 @@
+client -> server: username si parola sa fie adaugate in BD
+client -> server: username si parola sa fie autentificate
+client -> server: useri online
+server -> client: confirmare autentificare
+server -> client: usr si mesaj scris
+
+
+Header
+	-lungime mesaj(8 biti si lungimea e in Bytes)
+  -comanda/mesaj(1bit)
+  -autentificare(1bit)
+  -signup(1bit)
+  -reserved(5biti)
+  [lungime][comanda][autentificare][signup][reserved]
+  
+  By default citesti 2 Bytes si dupa citesti 1'st Byte de Bytes
+
+Body [256 Bytes]
+	-mesaj
+  -user si parola(autentificare si signUp
+  -comanda
+
+Total pachet: 258 Bytes max
+
+Autentificare: client->server user si parola
+							server->ok sau nu
+              
+              -u user -p parola 
