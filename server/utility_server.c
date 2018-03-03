@@ -5,9 +5,10 @@
 #define GET_IP 2
 char * get_ip_port(int argv,char *argc[],int optiune)
 {
+	
+	int i;
 
-
-    for(int i=1;i<argv;i++)
+    for( i=1;i<argv;i++)
         if(optiune==GET_PORT&&i<argv&&strcmp(argc[i],"-p")==0)
         {
             return argc[i+1];
