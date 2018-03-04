@@ -1,8 +1,13 @@
 client -> server: username si parola sa fie adaugate in BD
 client -> server: username si parola sa fie autentificate
 client -> server: useri online
+client -> server: comanda de deconectare(mesaj catre server prin care clientul nu mai doreste sa comunice cu chat-ul)
+
+
 server -> client: confirmare autentificare
 server -> client: usr si mesaj scris
+server -> client: comanda de deconectare(mesaj ca se inchide taraba si nu se mai pot trimite mesaje)
+
 
 
 Header
@@ -12,7 +17,7 @@ Header
   -signup(1bit)
   -reserved(5biti)
   [lungime][comanda][autentificare][signup][reserved]
-  
+
   By default citesti 2 Bytes si dupa citesti 1'st Byte de Bytes
 
 Body [256 Bytes]
@@ -24,5 +29,8 @@ Total pachet: 258 Bytes max
 
 Autentificare: client->server user si parola
 							server->ok sau nu
-              
-              -u user -p parola 
+
+              -u user -p parola
+
+Deconectare: server->client comanda cu -d ca parametru
+							client->serve comanda cu -d ca parametru
