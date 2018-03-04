@@ -19,6 +19,37 @@ void print_header()
     printf("+**********************************************************************+\n\n\n");
 }
 
+
+char *pack_message(char *message, int bit){
+
+	char message_length[1];
+	message_length[0] = strlen(message);
+
+	char header_data[1];
+	header_data[0] = 0b00000000;
+	if(bit == 0){
+		header_data[0] = 0b00000000;	//comanda
+	}
+	if(bit == 1){
+		header_data[0] = 0b10000000;	//mesaj
+	}
+	
+	if(bit == 2){
+		header_data[0] = 0b01000000;	//login
+	}
+
+	if(bit == 3){
+		header_data[0] = 0b00100000;	//signup
+	}
+
+	char *final_message = (char *) malloc(258);
+	strcat(final_message, message_length);
+	strcat(final_message, header_data);
+	strcat(final_message, message);
+
+	return final_message;
+}
+
 void signup(int socket)
 {
     char username[30];
@@ -57,7 +88,14 @@ void signup(int socket)
     
     if (!strcmp(password,repeated_password))
     {
-        //TODO send username and password to server to be added to database
+		char signup_message[256] = "";
+		strcat(signup_message, "-u ");
+		strcat(signup_message, username);
+		strcat(signup_message, " -p ");
+		strcat(signup_message, password);
+		strcpy(signup_message, pack_message(signup_message, 3));
+
+        send(socket, signup_message, sizeof(signup_message), 0);
     }
     else
     {
@@ -65,20 +103,22 @@ void signup(int socket)
     }
 }
 
-void send_message(int socket)
+
+void message_loop(int socket)
 {
     char message[256];
     while (1)
     {
         fgets(message,sizeof(message),stdin);
-	message[strlen(message) - 1] = '\0';
+		message[strlen(message) - 1] = '\0';
         if (strlen(message) > 256)
         {
             printf("Messages should be lower than 256 characters\n");
         }
         else
         {
-            send(socket,message,sizeof(message),0);
+			strcpy(message, pack_message(message, 1));
+            send(socket, message, sizeof(message), 0);
         }
     }
 }
@@ -108,9 +148,16 @@ void login(int socket)
         }
     } while (strlen(password) >= 30);
     
-    //TODO send username and password to server for authentication
+	
+	char login_message[256] = "";
+	strcat(login_message, "-u ");
+	strcat(login_message, username);
+	strcat(login_message, " -p ");
+	strcat(login_message, password);
+	strcpy(login_message, pack_message(login_message, 2));
     
-    send_message(socket);
+	//TODO check if logged in before entering chat room
+    message_loop(socket);
 }
 
 void menu(int socket)

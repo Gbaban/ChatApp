@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -56,6 +57,34 @@ void server_message_interpreter(char *server_message)
 {
     printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
+	
+	char message_length[1];
+	message_length[0] = server_message[0];
+	
+	char header_data[1];
+	header_data[0] = server_message[1];
+	
+	char *body_message = (char *) malloc(256);
+	body_message = server_message + 2;
+	printf("%s\n", body_message);
+	
+	if(strlen(body_message) != message_length[0]){
+		printf("Some bits got lost\n");
+		exit(3);
+	}
+
+	if(header_data[0] == 0b00000000){
+		printf("comanda\n");
+	}
+	if(header_data[0] == 0b10000000){
+		printf("mesaj\n");
+	}
+	if(header_data[0] == 0b01000000){
+		printf("login\n");
+	}
+	if(header_data[0] == 0b00100000){
+		printf("signup\n");
+	}
 }
 
 void* listen_to_server(void *void_arg)
@@ -76,3 +105,4 @@ void* listen_to_server(void *void_arg)
     
     return NULL;
 }
+
