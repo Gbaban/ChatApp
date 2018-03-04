@@ -30,7 +30,7 @@ void *handle_connection(void *vargp)
     sprintf(server_message,"%s %d\n",server_message,nr);
     int i=0;
     for(;i<client_sockets_dimension;i++)
-            send(client_sockets[i],server_message,sizeof(server_message),0);
+            //send(client_sockets[i],server_message,sizeof(server_message),0);
         ////////////////////////////////////////////////////////////////////////////
 
     return NULL;
@@ -79,3 +79,18 @@ void manage_multiple_connections(int server_socket)
     close(server_socket);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+void close_all_connections()
+{
+  int i=0;
+  for(;i<client_sockets_dimension;i++)
+  {
+      /*if(shutdown(client_sockets[i],2) < 0);
+      {
+        printf("Error closing ports\n");
+      }*/
+      close(client_sockets[i]);
+  }
+}

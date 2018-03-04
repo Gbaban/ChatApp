@@ -40,7 +40,7 @@ int setup_socket()
     char message[] = "Sup, I connected!\n";
     send(network_socket,message,sizeof(message),0);
 
-    char server_response[256];
+  /*  char server_response[256];
     if (recv(network_socket,server_response,sizeof(server_response),0) < 0)
     {
         printf("Error recieving data from server\n");
@@ -49,7 +49,7 @@ int setup_socket()
 
     //print out the server's response
     printf("The server sent the data: %s\n",server_response);
-    
+    */
     return network_socket;
 }
 
@@ -57,17 +57,17 @@ void server_message_interpreter(char *server_message)
 {
     printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
-	
+
 	char message_length[1];
 	message_length[0] = server_message[0];
-	
+
 	char header_data[1];
 	header_data[0] = server_message[1];
-	
+
 	char *body_message = (char *) malloc(256);
 	body_message = server_message + 2;
 	printf("%s\n", body_message);
-	
+
 	if(strlen(body_message) != message_length[0]){
 		printf("Some bits got lost\n");
 		exit(3);
@@ -90,9 +90,9 @@ void server_message_interpreter(char *server_message)
 void* listen_to_server(void *void_arg)
 {
     char server_message[256];
-    
+
     int network_socket = *((int *)void_arg);
-    
+
     while (1)
     {
         if (recv(network_socket,server_message,sizeof(server_message),0) < 0)
@@ -102,7 +102,6 @@ void* listen_to_server(void *void_arg)
 
         server_message_interpreter(server_message);
     }
-    
+
     return NULL;
 }
-

@@ -9,6 +9,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 
 #include "utility_server.h"
@@ -17,11 +18,20 @@
 #define PORT 9002
 #define ADDRESS "192.168.0.102"
 
+void INThandler(int sig)
+{
 
+  printf("Closing server\n");
+  exit(0);
+
+}
 
 
 int main(int argv,char *argc[])
 {
+
+    signal(SIGINT, INThandler);
+
 
     //create the server socket
     int server_socket;

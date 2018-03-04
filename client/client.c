@@ -17,22 +17,22 @@ int main()
 {
     int status, network_socket;
     pthread_t tid;
-    
+
     network_socket = setup_socket();
-    
+
     if ((tid = pthread_create(&tid,NULL,listen_to_server,(void *)&network_socket)) < 0)
     {
         printf("Error creating thread\n");
         exit(0);
     }
-        
+
     print_header();
-    
+
     menu(network_socket);
-    
+
     close(network_socket);
-    
+
     pthread_join(tid,NULL);
-    
+
     return 0;
 }
