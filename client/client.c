@@ -25,12 +25,10 @@ int main()
         printf("Error creating thread\n");
         exit(0);
     }
-    
+        
     print_header();
     
-    menu();
-    
-    //TODO main chat logic goes here
+    menu(network_socket);
     
     close(network_socket);
     

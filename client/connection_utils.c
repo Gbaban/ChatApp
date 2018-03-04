@@ -71,7 +71,6 @@ void* listen_to_server(void *void_arg)
             printf("Error while listening to server\n");
         }
 
-        printf("got a message!\n");
         server_message_interpreter(server_message);
     }
     

@@ -5,6 +5,12 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 void print_header()
 {
     printf("+**********************************************************************+\n");
@@ -13,7 +19,7 @@ void print_header()
     printf("+**********************************************************************+\n\n\n");
 }
 
-void signup()
+void signup(int socket)
 {
     char username[30];
     char password[30];
@@ -59,7 +65,25 @@ void signup()
     }
 }
 
-void login()
+void send_message(int socket)
+{
+    char message[256];
+    while (1)
+    {
+        fgets(message,sizeof(message),stdin);
+	message[strlen(message) - 1] = '\0';
+        if (strlen(message) > 256)
+        {
+            printf("Messages should be lower than 256 characters\n");
+        }
+        else
+        {
+            send(socket,message,sizeof(message),0);
+        }
+    }
+}
+
+void login(int socket)
 {
     char username[30];
     char password[30];
@@ -85,9 +109,11 @@ void login()
     } while (strlen(password) >= 30);
     
     //TODO send username and password to server for authentication
+    
+    send_message(socket);
 }
 
-void menu()
+void menu(int socket)
 {
     int input;
     do
@@ -100,9 +126,9 @@ void menu()
 
         switch (input)
         {
-            case 1: { signup(); break; }
-            case 2: { login(); input = 0; break; }
-            case 0: { break; }
+            case 1: { signup(socket); break; }
+            case 2: { login(socket); input = 0; break; }
+            case 0: { exit(0); break; }
             default: { printf("\nERROR: Invalid input!\n"); }
         }
     } while (input != 0);
