@@ -10,16 +10,19 @@ int close_connections = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-char *pack_message(char *original_message, unsigned char flags)
+char *pack_message(char *original_message, char flags)
 {
   unsigned char message_lenght = (unsigned char)strlen(original_message);
-  unsigned char message_flags = flags;
+  char message_flags = (char)flags;
 
   char *message = (char *) malloc(259);
 
   message[0] = message_lenght;
   message[1] = message_flags;
+
   strcat(message,original_message);
+
+    printf("Message: %d %d %s %s\n",message[0],message[1], message+2, message);
 
   return message;
 
@@ -34,16 +37,16 @@ void *handle_connection(void *vargp)
     int client_socket=*((int *)vargp);
     unsigned char client_header[2];
     char client_response[256];
-    if (recv(client_socket,client_header,2,0) <= 0)
+    if (recv(client_socket,client_header,2,0) < 0)
     {
             printf("Error recieving data from client\n");
-            exit(1);
+            //exit(1);
     }
 
-    if (recv(client_socket,client_response,client_header[0],0) <= 0)
+    if (recv(client_socket,client_response,client_header[0],0) < 0)
     {
             printf("Error recieving data from client\n");
-            exit(1);
+            //exit(1);
     }
 
 
@@ -53,7 +56,9 @@ void *handle_connection(void *vargp)
     printf("The client sent the following data here: %s %d\n",client_response,nr);
     //sprintf(server_message,"%s %d\n",server_message,nr);
     char *message = pack_message("You have reached the server!",MESSAGE);
+    //printf("Sending message\n");
     send(client_socket,message,strlen(message),0);
+    //printf("Message sent\n");
     free(message);
     /*int i=0;
     for(;i<client_sockets_dimension;i++)*/
@@ -63,15 +68,27 @@ void *handle_connection(void *vargp)
     //loop until connection needs to be closed
     while(!close_connections)
     {
-      if (recv(client_socket,client_response,sizeof(client_response),0) < 0)
-      {
-              printf("Error recieving data from client\n");
-              exit(1);
-      }
-    }
+          if (recv(client_socket,client_header,2,0) < 0)
+        {
+                printf("Error recieving data from client1\n");
+                //exit(1);
+        }
+        else if ((recv(client_socket,client_response,client_header[0],0) < 0))
+        {
+                printf("Error recieving data from client\n");
+                //exit(1);
+        }
+        else
+        {
+          printf("Header %x %x\n",client_header[0],client_header[1]);
+          printf("Response: %s\n", client_response);
+        }
 
-    message = pack_message("-d",COMMAND);
+    }
+    message = pack_message("-d\0",COMMAND);
+    printf("Sending...\n");
     send(client_socket,message,strlen(message),0);
+    printf("Sent...\n");
     close(client_socket);
 
     free(message);
@@ -95,10 +112,13 @@ void close_all_connections()
 void manage_multiple_connections(int server_socket)
 {
 
-    int client_socket;
 
-    while(client_socket = accept(server_socket,NULL,NULL))
+
+    while(1)
     {
+        int client_socket;
+
+        client_socket = accept(server_socket,NULL,NULL);
 
         struct sockaddr_in client_address;
 
@@ -117,7 +137,7 @@ void manage_multiple_connections(int server_socket)
         //initializare threads
         pthread_t tid;
         pthread_create(&tid, NULL, handle_connection, (void *)&client_socket);
-        pthread_join(tid, NULL);
+        //pthread_join(tid, NULL);
         //////////////////////////////////////////////////////////////////
 
     }//loop for incoming connections

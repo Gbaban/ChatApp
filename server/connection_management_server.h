@@ -22,7 +22,7 @@
 void *handle_connection(void *vargp);
 void manage_multiple_connections(int server_socket);
 void close_all_connections();
-char *pack_message(char *original_message, unsigned char flags);
+char *pack_message(char *original_message, char flags);
 void close_all_connections();
 
 

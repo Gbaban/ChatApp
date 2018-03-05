@@ -2,7 +2,7 @@
 #define CONNECTION_UTILS_H
 
 int setup_socket();
-void server_message_interpreter(char *server_message);
+void server_message_interpreter(char *server_message, char header[2]);
 void* listen_to_server(void *void_arg);
 
 #endif

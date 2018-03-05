@@ -33,7 +33,7 @@ char *pack_message(char *message, int bit){
 	if(bit == 1){
 		header_data = 0b10000000;	//mesaj
 	}
-	
+
 	if(bit == 2){
 		header_data = 0b01000000;	//login
 	}
@@ -45,15 +45,15 @@ char *pack_message(char *message, int bit){
 	char *final_message = (char *) malloc(258);
 	final_message[0] = message_length;
     final_message[1] = header_data;
-    
+
     int i;
     for (i = 0; i < strlen(message); i++)
     {
         final_message[i + 2] = message[i];
     }
 
-    //printf("final: %d %d %s\n",final_message[0],final_message[1],final_message);
-    
+    printf("final: %d %d %s\n",final_message[0],final_message[1],final_message+2);
+
 	return final_message;
 }
 
@@ -81,7 +81,7 @@ void signup(int socket)
     char username[30];
     char password[30];
     char repeated_password[30];
-    
+
     do
     {
         printf("Username: ");
@@ -91,7 +91,7 @@ void signup(int socket)
             printf("Username should be lower than 30 characters\n");
         }
     } while (strlen(username) >= 30);
-    
+
     do
     {
         printf("Password: ");
@@ -101,7 +101,7 @@ void signup(int socket)
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(password) >= 30);
-    
+
     do
     {
         printf("Repeat password: ");
@@ -111,7 +111,7 @@ void signup(int socket)
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(repeated_password) >= 30);
-    
+
     if (!strcmp(password,repeated_password))
     {
 		char signup_message[256] = "";
@@ -127,7 +127,7 @@ void signup(int socket)
     {
         printf("The repeated password must be identical to the original!\n");
     }
-    
+
     message_loop(socket);
 }
 
@@ -135,7 +135,7 @@ void login(int socket)
 {
     char username[30];
     char password[30];
-    
+
     do
     {
         printf("Username: ");
@@ -145,7 +145,7 @@ void login(int socket)
             printf("Username should be lower than 30 characters\n");
         }
     } while (strlen(username) >= 30);
-    
+
     do
     {
         printf("Password: ");
@@ -155,15 +155,15 @@ void login(int socket)
             printf("Password should be lower than 30 characters\n");
         }
     } while (strlen(password) >= 30);
-    
-	
+
+
 	char login_message[256] = "";
 	strcat(login_message, "-u ");
 	strcat(login_message, username);
 	strcat(login_message, " -p ");
 	strcat(login_message, password);
 	strcpy(login_message, pack_message(login_message, 2));
-    
+
 	//TODO check if logged in before entering chat room
     message_loop(socket);
 }
@@ -171,12 +171,12 @@ void login(int socket)
 void disconnect_client(int socket)
 {
     char message[] = "-d";
-    send(socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
-    
+    send(socket,pack_message(message,0),sizeof(pack_message(message,0)),0);
+
     close(socket);
- 
+
     printf("You have disconnected\n");
-    
+
     exit(0);
 }
 

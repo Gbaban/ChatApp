@@ -42,23 +42,32 @@ int setup_socket()
     send(network_socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
 
     char server_response[256];
-    if (recv(network_socket,server_response,sizeof(server_response),0) < 0)
+    char header[2];
+    if (recv(network_socket,header,2,MSG_WAITALL) < 0)
     {
-        printf("Error recieving data from server\n");
-        exit(1);
+        printf("Error while listening to server\n");
+        close(network_socket);
     }
+    //MSG_WAITALL
+    else if(recv(network_socket,server_response,header[0],MSG_WAITALL) < 0)
+    {
+      printf("Error while listening to server\n");
+      close(network_socket);
+    }
+    else{
+      //printf("Message incoming: %d %d %s", header[0], header[1], server_response);
+    server_message_interpreter(server_response,header);
+  }
 
-    server_message_interpreter(server_response);
-    
     return network_socket;
 }
 
-void server_message_interpreter(char *server_message)
+void server_message_interpreter(char *server_message, char header[2])
 {
     //printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
 
-	char message_length[1];
+	/*char message_length[1];
 	message_length[0] = server_message[0];
 
 	char header_data[1];
@@ -71,32 +80,40 @@ void server_message_interpreter(char *server_message)
 		printf("Some bits got lost\n");
 		exit(3);
 	}
-    
-    switch(header_data[0])
+  */
+    switch(header[1])
     {
-        case -128: { printf("mesaj: %s\n",body_message); break; } //mesaj
+        case -128: { printf("mesaj: %s\n",server_message); break; } //mesaj
         case 64: { printf("login\n"); break; } //login
         case 32: { printf("signup\n"); break; } //signup
-        case 0: { printf("comanda\n"); break; } //comanda
+        case 0: { printf("comanda : %s\n", server_message); break; } //comanda
     }
-	
-	free(server_message);
+
+	   //free(server_message);
+
 }
 
 void* listen_to_server(void *void_arg)
 {
     char server_message[256];
+    char header[2];
 
     int network_socket = *((int *)void_arg);
 
     while (1)
     {
-        if (recv(network_socket,server_message,sizeof(server_message),0) < 0)
+        if (recv(network_socket,header,2,0) < 0)
         {
             printf("Error while listening to server\n");
         }
+        else if(recv(network_socket,server_message,header[0],0) < 0)
+        {
+          printf("Error while listening to server\n");
+        }
+        else{
 
-        server_message_interpreter(server_message);
+        server_message_interpreter(server_message,header);
+      }
     }
 
     return NULL;
