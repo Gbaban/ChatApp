@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,13 +18,18 @@ int main()
 {
     int status, network_socket;
     pthread_t tid;
+    struct sigaction *sa;
     
-    server_message_interpreter(pack_message("Test message",1));
+    sa->sa_handler = disconnect_client;
     
-    //network_socket = setup_socket();
+    if (sigaction(SIGINT,sa,NULL) < 0)
+    {
+        printf("Error assigning disconnect handler\n");
+        exit(1);
+    }
     
+    network_socket = setup_socket();
     
-    /*
     if ((tid = pthread_create(&tid,NULL,listen_to_server,(void *)&network_socket)) < 0)
     {
         printf("Error creating thread\n");
@@ -32,11 +38,9 @@ int main()
 
     print_header();
 
-    menu(network_socket);
+    menu(tid,network_socket);
 
-    close(network_socket);
-
-    pthread_join(tid,NULL);*/
-
+    pthread_join(tid,NULL);
+    
     return 0;
 }

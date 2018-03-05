@@ -37,7 +37,7 @@ int setup_socket()
         exit(0);
     }
 
-    //beta handshaking
+    //handshaking
     char message[] = "Sup, I connected!\n";
     send(network_socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
 

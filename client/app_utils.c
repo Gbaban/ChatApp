@@ -52,9 +52,28 @@ char *pack_message(char *message, int bit){
         final_message[i + 2] = message[i];
     }
 
-    printf("final: %d %d %s\n",final_message[0],final_message[1],final_message);
+    //printf("final: %d %d %s\n",final_message[0],final_message[1],final_message);
     
 	return final_message;
+}
+
+void message_loop(int socket)
+{
+    char message[256];
+    while (1)
+    {
+        fgets(message,sizeof(message),stdin);
+		message[strlen(message) - 1] = '\0';
+        if (strlen(message) > 256)
+        {
+            printf("Messages should be lower than 256 characters\n");
+        }
+        else
+        {
+			strcpy(message, pack_message(message, 1));
+            send(socket, message, sizeof(message), 0);
+        }
+    }
 }
 
 void signup(int socket)
@@ -108,26 +127,8 @@ void signup(int socket)
     {
         printf("The repeated password must be identical to the original!\n");
     }
-}
-
-
-void message_loop(int socket)
-{
-    char message[256];
-    while (1)
-    {
-        fgets(message,sizeof(message),stdin);
-		message[strlen(message) - 1] = '\0';
-        if (strlen(message) > 256)
-        {
-            printf("Messages should be lower than 256 characters\n");
-        }
-        else
-        {
-			strcpy(message, pack_message(message, 1));
-            send(socket, message, sizeof(message), 0);
-        }
-    }
+    
+    message_loop(socket);
 }
 
 void login(int socket)
@@ -167,7 +168,19 @@ void login(int socket)
     message_loop(socket);
 }
 
-void menu(int socket)
+void disconnect_client(int socket)
+{
+    char message[] = "-d";
+    send(socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
+    
+    close(socket);
+ 
+    printf("You have disconnected\n");
+    
+    exit(0);
+}
+
+void menu(pthread_t tid, int socket)
 {
     int input;
     do
@@ -180,9 +193,9 @@ void menu(int socket)
 
         switch (input)
         {
-            case 1: { signup(socket); break; }
+            case 1: { signup(socket); input = 0; break; }
             case 2: { login(socket); input = 0; break; }
-            case 0: { exit(0); break; }
+            case 0: { disconnect_client(socket); break; }
             default: { printf("\nERROR: Invalid input!\n"); }
         }
     } while (input != 0);

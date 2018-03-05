@@ -3,6 +3,7 @@
 
 void print_header();
 char *pack_message(char *message, int bit);
+void disconnect_client();
 void menu();
 
 #endif
