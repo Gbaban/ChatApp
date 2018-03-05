@@ -21,6 +21,7 @@
 void INThandler(int sig)
 {
 
+  close_all_connections();
   printf("Closing server\n");
   exit(0);
 

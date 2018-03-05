@@ -6,6 +6,7 @@
 
 #define GET_PORT 1
 #define GET_IP 2
+
 char * get_ip_port(int argv,char *argc[],int optiune);
 
 

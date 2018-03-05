@@ -13,9 +13,17 @@
 #include <unistd.h>
 #include <string.h>
 
+#define MESSAGE	0x80
+#define LOGIN	0x40
+#define SIGNUP 0x20
+#define COMMAND 0x00
+
 
 void *handle_connection(void *vargp);
 void manage_multiple_connections(int server_socket);
+void close_all_connections();
+char *pack_message(char *original_message, unsigned char flags);
+void close_all_connections();
 
 
 #endif // CONNECTION_MANAGEMENT_SERVER_H_INCLUDED
