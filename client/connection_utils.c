@@ -1,4 +1,5 @@
 #include "connection_utils.h"
+#include "app_utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,24 +39,23 @@ int setup_socket()
 
     //beta handshaking
     char message[] = "Sup, I connected!\n";
-    send(network_socket,message,sizeof(message),0);
+    send(network_socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
 
-  /*  char server_response[256];
+    char server_response[256];
     if (recv(network_socket,server_response,sizeof(server_response),0) < 0)
     {
         printf("Error recieving data from server\n");
         exit(1);
     }
 
-    //print out the server's response
-    printf("The server sent the data: %s\n",server_response);
-    */
+    server_message_interpreter(server_response);
+    
     return network_socket;
 }
 
 void server_message_interpreter(char *server_message)
 {
-    printf("Recieved from server: %s\n",server_message);
+    //printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
 
 	char message_length[1];
@@ -66,25 +66,21 @@ void server_message_interpreter(char *server_message)
 
 	char *body_message = (char *) malloc(256);
 	body_message = server_message + 2;
-	printf("%s\n", body_message);
 
 	if(strlen(body_message) != message_length[0]){
 		printf("Some bits got lost\n");
 		exit(3);
 	}
-
-	if(header_data[0] == 0b00000000){
-		printf("comanda\n");
-	}
-	if(header_data[0] == 0b10000000){
-		printf("mesaj\n");
-	}
-	if(header_data[0] == 0b01000000){
-		printf("login\n");
-	}
-	if(header_data[0] == 0b00100000){
-		printf("signup\n");
-	}
+    
+    switch(header_data[0])
+    {
+        case -128: { printf("mesaj: %s\n",body_message); break; } //mesaj
+        case 64: { printf("login\n"); break; } //login
+        case 32: { printf("signup\n"); break; } //signup
+        case 0: { printf("comanda\n"); break; } //comanda
+    }
+	
+	free(server_message);
 }
 
 void* listen_to_server(void *void_arg)

@@ -2,8 +2,7 @@
 #define APP_UTILS_H
 
 void print_header();
-void signup();
-void login();
+char *pack_message(char *message, int bit);
 void menu();
 
 #endif

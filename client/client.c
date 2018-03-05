@@ -17,9 +17,13 @@ int main()
 {
     int status, network_socket;
     pthread_t tid;
-
-    network_socket = setup_socket();
-
+    
+    server_message_interpreter(pack_message("Test message",1));
+    
+    //network_socket = setup_socket();
+    
+    
+    /*
     if ((tid = pthread_create(&tid,NULL,listen_to_server,(void *)&network_socket)) < 0)
     {
         printf("Error creating thread\n");
@@ -32,7 +36,7 @@ int main()
 
     close(network_socket);
 
-    pthread_join(tid,NULL);
+    pthread_join(tid,NULL);*/
 
     return 0;
 }

@@ -22,31 +22,38 @@ void print_header()
 
 char *pack_message(char *message, int bit){
 
-	char message_length[1];
-	message_length[0] = strlen(message);
+	char message_length;
+	message_length = strlen(message);
 
-	char header_data[1];
-	header_data[0] = 0b00000000;
+	char header_data;
+	header_data = 0b00000000;
 	if(bit == 0){
-		header_data[0] = 0b00000000;	//comanda
+		header_data = 0b00000000;	//comanda
 	}
 	if(bit == 1){
-		header_data[0] = 0b10000000;	//mesaj
+		header_data = 0b10000000;	//mesaj
 	}
 	
 	if(bit == 2){
-		header_data[0] = 0b01000000;	//login
+		header_data = 0b01000000;	//login
 	}
 
 	if(bit == 3){
-		header_data[0] = 0b00100000;	//signup
+		header_data = 0b00100000;	//signup
 	}
 
 	char *final_message = (char *) malloc(258);
-	strcat(final_message, message_length);
-	strcat(final_message, header_data);
-	strcat(final_message, message);
+	final_message[0] = message_length;
+    final_message[1] = header_data;
+    
+    int i;
+    for (i = 0; i < strlen(message); i++)
+    {
+        final_message[i + 2] = message[i];
+    }
 
+    printf("final: %d %d %s\n",final_message[0],final_message[1],final_message);
+    
 	return final_message;
 }
 
