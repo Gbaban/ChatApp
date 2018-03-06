@@ -43,15 +43,19 @@ char *pack_message(char *message, int bit){
 	}
 
 	char *final_message = (char *) malloc(258);
-	final_message[0] = message_length;
-    final_message[1] = header_data;
+	final_message[0] = message_length+1;
+    	final_message[1] = header_data;
 
+/*
     int i;
+
     for (i = 0; i < strlen(message); i++)
     {
         final_message[i + 2] = message[i];
     }
+*/
 
+	strcat(final_message,message);	
     printf("final: %d %d %s\n",final_message[0],final_message[1],final_message+2);
 
 	return final_message;
@@ -64,6 +68,10 @@ void message_loop(int socket)
     {
         fgets(message,sizeof(message),stdin);
 		message[strlen(message) - 1] = '\0';
+	if(strlen(message) == 0)
+	{
+		printf("No blank message\n");
+	} else
         if (strlen(message) > 256)
         {
             printf("Messages should be lower than 256 characters\n");
@@ -71,7 +79,7 @@ void message_loop(int socket)
         else
         {
 			strcpy(message, pack_message(message, 1));
-            send(socket, message, sizeof(message), 0);
+            send(socket, message, strlen(message), 0);
         }
     }
 }
@@ -121,13 +129,14 @@ void signup(int socket)
 		strcat(signup_message, password);
 		strcpy(signup_message, pack_message(signup_message, 3));
 
-        send(socket, signup_message, sizeof(signup_message), 0);
+        send(socket, signup_message, strlen(signup_message), 0);
     }
     else
     {
         printf("The repeated password must be identical to the original!\n");
     }
-
+	
+	fflush(stdin);
     message_loop(socket);
 }
 
@@ -171,7 +180,7 @@ void login(int socket)
 void disconnect_client(int socket)
 {
     char message[] = "-d";
-    send(socket,pack_message(message,0),sizeof(pack_message(message,0)),0);
+    send(socket,pack_message(message,0),strlen(pack_message(message,0)),0);
 
     close(socket);
 

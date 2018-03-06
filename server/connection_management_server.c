@@ -35,7 +35,7 @@ void *handle_connection(void *vargp)
 
     nr++;
     int client_socket=*((int *)vargp);
-    unsigned char client_header[2];
+    signed char client_header[2];
     char client_response[256];
     if (recv(client_socket,client_header,2,0) < 0)
     {
@@ -66,22 +66,36 @@ void *handle_connection(void *vargp)
         ////////////////////////////////////////////////////////////////////////////
 
     //loop until connection needs to be closed
+	printf("First%s \n",client_response);
+	strcpy(client_response,"\0");
+	printf("Second%s \n",client_response);
+    char *client_response_smth;
     while(!close_connections)
     {
+	client_response_smth = (char*)malloc(257);
           if (recv(client_socket,client_header,2,0) < 0)
         {
                 printf("Error recieving data from client1\n");
                 //exit(1);
         }
-        else if ((recv(client_socket,client_response,client_header[0],0) < 0))
+        else if ((recv(client_socket,client_response_smth,client_header[0],0) <= 0))
         {
                 printf("Error recieving data from client\n");
                 //exit(1);
         }
         else
         {
-          printf("Header %x %x\n",client_header[0],client_header[1]);
-          printf("Response: %s\n", client_response);
+	  client_response_smth[client_header[0]-1] = 0;
+          printf("Header %d %d\n",client_header[0],client_header[1]);
+          printf("Response: %s\n", client_response_smth);
+	  /*int i=0;
+          for(;i<client_sockets_dimension;i++){
+	  	send(client_sockets[i],client_response_smth,strlen(client_response_smth),0);
+		printf("----");
+	  }
+	*/
+	  free(client_response_smth);
+	  
         }
 
     }

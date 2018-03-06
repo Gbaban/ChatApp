@@ -39,7 +39,7 @@ int setup_socket()
 
     //handshaking
     char message[] = "Sup, I connected!\n";
-    send(network_socket,pack_message(message,1),sizeof(pack_message(message,1)),0);
+    send(network_socket,pack_message(message,1),strlen(pack_message(message,1)),0);
 
     char server_response[256];
     char header[2];
