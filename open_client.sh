@@ -1,2 +1,2 @@
-gnome-terminal -x client/client
+gnome-terminal -x client/client $1
 

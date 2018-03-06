@@ -88,12 +88,13 @@ void *handle_connection(void *vargp)
 	  client_response_smth[client_header[0]-1] = 0;
           printf("Header %d %d\n",client_header[0],client_header[1]);
           printf("Response: %s\n", client_response_smth);
-	  /*int i=0;
+	  int i=0;
           for(;i<client_sockets_dimension;i++){
-	  	send(client_sockets[i],client_response_smth,strlen(client_response_smth),0);
+		char *message1=pack_message(client_response_smth,MESSAGE);
+	  	send(client_sockets[i],message1,strlen(message1),0);
 		printf("----");
 	  }
-	*/
+	
 	  free(client_response_smth);
 	  
         }
