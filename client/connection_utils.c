@@ -13,9 +13,8 @@
 #include <arpa/inet.h>
 
 #define ADDRESS "192.168.0.102"
-#define PORT 9002
 
-int setup_socket()
+int setup_socket(int port)
 {
     int network_socket;
     network_socket = socket(AF_INET,SOCK_STREAM,0);
@@ -27,7 +26,7 @@ int setup_socket()
 
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(PORT);
+    server_address.sin_port = htons(port);
     //server_address.sin_addr.s_addr = inet_addr(ADDRESS); //use when we actually get an IP
     server_address.sin_addr.s_addr = INADDR_ANY; //use for debug purposes
 
