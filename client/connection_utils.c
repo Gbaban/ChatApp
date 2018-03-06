@@ -110,7 +110,7 @@ void* listen_to_server(void *void_arg)
           printf("Error while listening to server\n");
         }
         else{
-
+	server_message[header[0]] = 0;	
         server_message_interpreter(server_message,header);
       }
     }
