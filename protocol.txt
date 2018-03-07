@@ -12,11 +12,12 @@ server -> client: comanda de deconectare(mesaj ca se inchide taraba si nu se mai
 
 Header
 	-lungime mesaj(8 biti si lungimea e in Bytes)
-  -comanda/mesaj(1bit)
+  -mesaj(1bit)
   -autentificare(1bit)
   -signup(1bit)
-  -reserved(5biti)
-  [lungime][comanda][autentificare][signup][reserved]
+	-comanda(1bit)
+  -reserved(4biti)
+  [lungime][mesaj][autentificare][signup][comanda][reserved]
 
   By default citesti 2 Bytes si dupa citesti 1'st Byte de Bytes
 
