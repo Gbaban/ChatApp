@@ -18,6 +18,14 @@
 #define SIGNUP 0x20
 #define COMMAND 0x10
 
+#define FAIL 0
+#define LOGIN_SUCCESS 1
+#define LOGIN_FAIL 2
+#define SIGNUP_SUCCESS 3
+#define SIGNUP_FAIL 4
+#define SUCCESS 254
+
+
 
 void *handle_connection(void *vargp);
 void manage_multiple_connections(int server_socket);

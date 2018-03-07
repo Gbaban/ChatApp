@@ -28,14 +28,41 @@ char *pack_message(char *original_message, char flags)
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
-
+int login(client_response_smth)
+{
+  return LOGIN_SUCCESS;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////
+int signup(client_response_smth)
+{
+  return SIGNUP_SUCCESS;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+int command(client_response_smth)
+{
+  return SUCCESS;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+int messageImterpreter(const char client_header[2], const char *client_response_smth)
+{
+  switch(client_header[1])
+  {
+    case LOGIN: printf("This is a login\n");return login(client_response_smth);break;
+    case SIGNUP: printf("This is signup\n");return signup(client_response_smth);break;
+    case COMMAND: printf("This is a command\n"); return command(client_response_smth);break;
+    default: printf("Unhandled header parameter\n");break;
+  }
+  return FAIL;
+}
+
+////////////////////////////////////////////////////////////ss/////////////////////////////////
 void *handle_connection(void *vargp)
 {
 
     nr++;
     int client_socket=*((int *)vargp);
-    signed char client_header[2];
+    unsigned char client_header[2];
     char client_response[256];
     if (recv(client_socket,client_header,2,0) < 0)
     {
@@ -88,16 +115,26 @@ void *handle_connection(void *vargp)
 	  client_response_smth[client_header[0]-1] = 0;
           printf("Header %d %d\n",client_header[0],client_header[1]);
           printf("Response: %s\n", client_response_smth);
-	  int i=0;
-          for(;i<client_sockets_dimension;i++)
-       	  {
-		if(client_sockets[i]!=client_socket)
-		{
-			char *message1=pack_message(client_response_smth,MESSAGE);
-		  	send(client_sockets[i],message1,strlen(message1),0);
-			printf("----");
-		}
-	  }
+
+    //printf("Header compare:%d %d %d\n",client_header[1], MESSAGE, client_header[1] == MESSAGE);
+    if(client_header[1] == MESSAGE)
+    {
+    	  int i=0;
+              for(;i<client_sockets_dimension;i++)
+           	  {
+              		if(client_sockets[i]!=client_socket)
+              		{
+              			char *message1=pack_message(client_response_smth,MESSAGE);
+              		  	send(client_sockets[i],message1,strlen(message1),0);
+              			printf("----");
+              		}
+    	  }
+    }
+    else
+    {
+      printf("messageImterpreter\n");
+      messageImterpreter(client_header,client_response_smth);
+    }
 
 	  free(client_response_smth);
 

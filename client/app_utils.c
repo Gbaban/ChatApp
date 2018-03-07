@@ -46,16 +46,24 @@ void message_loop(int socket)
 	{
 		printf("No blank message\n");
 	} else
-        if (strlen(message) > 256)
+  {
+        if (strchr(message,29))
+        {
+          printf("ctrl+]\n");
+          //TODO sendCommand() implementation to scan input and send commands to server with COMMAND header
+          //sendCommand();
+        }
+        else if (strlen(message) > 256)
         {
             printf("Messages should be lower than 256 characters\n");
         }
         else
         {
-			strcpy(message, pack_message(message, MESSAGE));
-            send(socket, message, strlen(message), 0);
+		         strcpy(message, pack_message(message, MESSAGE));
+             send(socket, message, strlen(message), 0);
         }
     }
+  }
 }
 
 void signup(int socket)
@@ -102,8 +110,9 @@ void signup(int socket)
 		strcat(signup_message, " -p ");
 		strcat(signup_message, password);
 		strcpy(signup_message, pack_message(signup_message, SIGNUP));
-
+    //printf("Sending.......\n");
         send(socket, signup_message, strlen(signup_message), 0);
+    //printf("Sent\n");
     }
     else
     {
@@ -146,6 +155,8 @@ void login(int socket)
 	strcat(login_message, " -p ");
 	strcat(login_message, password);
 	strcpy(login_message, pack_message(login_message, LOGIN));
+
+    send(socket, login_message, strlen(login_message), 0);
 
 	//TODO check if logged in before entering chat room
     message_loop(socket);
