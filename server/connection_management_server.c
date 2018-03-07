@@ -15,16 +15,21 @@ char *pack_message(char *original_message, char flags)
   unsigned char message_lenght = (unsigned char)strlen(original_message);
   char message_flags = (char)flags;
 
-  char *message = (char *) malloc(259);
+  char *new_message = (char *) malloc(259);
+  if(!new_message)
+  {
+    printf("Fail on malloc");
+    exit(2);
+  }
 
-  message[0] = message_lenght;
-  message[1] = message_flags;
+  new_message[0] = message_lenght;
+  new_message[1] = message_flags;
 
-  strcat(message,original_message);
+  strcat(new_message,original_message);
 
-    printf("Message: %d %d %s %s\n",message[0],message[1], message+2, message);
+    printf("Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, new_message);
 
-  return message;
+  return new_message;
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,14 +105,14 @@ void *handle_connection(void *vargp)
     while(!close_connections)
     {
 	client_response_smth = (char*)malloc(257);
-          if (recv(client_socket,client_header,2,0) < 0)
+          if (recv(client_socket,client_header,2,0) < 2)
         {
                 printf("Error recieving data from client1\n");
                 //exit(1);
         }
-        else if ((recv(client_socket,client_response_smth,client_header[0],0) <= 0))
+        else if ((recv(client_socket,client_response_smth,client_header[0]-1,MSG_WAITALL) < client_header[0]-1))
         {
-                printf("Error recieving data from client\n");
+                printf("Error recieving data from client2\n");
                 //exit(1);
         }
         else
@@ -141,11 +146,14 @@ void *handle_connection(void *vargp)
         }
 
     }
-    message = pack_message("-d\0",COMMAND);
+    /*char *close_message = pack_message("-d",COMMAND);
     printf("Sending...\n");
-    send(client_socket,message,strlen(message),0);
+    if(send(client_socket,close_message,strlen(close_message),0) <0)
+    {
+      printf("Error on send\n");
+    }
     printf("Sent...\n");
-    close(client_socket);
+    close(client_socket);*/
 
     free(message);
 
@@ -158,6 +166,21 @@ void *handle_connection(void *vargp)
 
 void close_all_connections()
 {
+  int i;
+  char *close_message = pack_message("-d",COMMAND);
+  for(i=0;i<nr;i++)
+  {
+    printf("Sending...\n");
+    if(send(client_sockets[i],close_message,strlen(close_message),0) <0)
+    {
+      printf("Error on send\n");
+    }
+    printf("Sent...\n");
+    close(client_sockets[i]);
+  }
+
+  free(close_message);
+
   close_connections = 1;
 }
 

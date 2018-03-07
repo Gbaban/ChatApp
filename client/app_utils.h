@@ -9,6 +9,8 @@
 #define GET_PORT 1
 #define GET_IP 2
 
+int disconect_socket;
+
 void print_header();
 char *pack_message(char *message, char flags);
 void disconnect_client();

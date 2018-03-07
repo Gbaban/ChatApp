@@ -162,12 +162,16 @@ void login(int socket)
     message_loop(socket);
 }
 
-void disconnect_client(int socket)
+void disconnect_client(int sig)
 {
     char message[] = "-d";
-    send(socket,pack_message(message,COMMAND),strlen(pack_message(message,COMMAND)),0);
 
-    close(socket);
+    if(send(disconect_socket,pack_message(message,COMMAND),strlen(pack_message(message,COMMAND)),0) < 0)
+    {
+      printf("Error on send\n");
+    }
+
+    close(disconect_socket);
 
     printf("You have disconnected\n");
 

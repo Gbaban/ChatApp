@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     else
         network_socket = setup_socket(PORT);
 
+    disconect_socket = network_socket;
+
     signal(SIGINT, disconnect_client);
 
 

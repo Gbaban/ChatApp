@@ -14,6 +14,8 @@
 
 #define ADDRESS "192.168.0.102"
 
+
+
 int setup_socket(int port)
 {
 
@@ -84,10 +86,10 @@ void server_message_interpreter(char *server_message, char header[2])
   */
     switch(header[1])
     {
-        case -128: { printf("mesaj: %s\n",server_message); break; } //mesaj
-        case 64: { printf("login\n"); break; } //login
-        case 32: { printf("signup\n"); break; } //signup
-        case 0: { printf("comanda : %s\n", server_message); break; } //comanda
+        case MESSAGE: { printf("mesaj: %s\n",server_message); break; } //mesaj
+        case LOGIN: { printf("login\n"); break; } //login
+        case SIGNUP: { printf("signup\n"); break; } //signup
+        case COMMAND: { printf("comanda : %s\n", server_message); break; } //comanda
     }
 
 	   //free(server_message);
@@ -103,17 +105,21 @@ void* listen_to_server(void *void_arg)
 
     while (1)
     {
-        if (recv(network_socket,header,2,0) < 0)
+        if (recv(network_socket,header,2,0) < 2)
         {
-            printf("Error while listening to server\n");
+            printf("Error while listening to server1\n");
+            exit(1);
         }
-        else if(recv(network_socket,server_message,header[0],0) < 0)
+        else if(recv(network_socket,server_message,header[0],0) < header[0])
         {
-          printf("Error while listening to server\n");
+          printf("Error while listening to server2\n");
         }
         else{
-	server_message[header[0]] = 0;
+	         server_message[header[0]] = 0;
+           printf("Header %d %d\n",header[0],header[1]);
+           printf("Response: %s\n", server_message);
         server_message_interpreter(server_message,header);
+        strcpy(server_message,"");
       }
     }
 
