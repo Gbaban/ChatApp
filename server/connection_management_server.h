@@ -16,7 +16,7 @@
 #define MESSAGE	0x80
 #define LOGIN	0x40
 #define SIGNUP 0x20
-#define COMMAND 0x00
+#define COMMAND 0x10
 
 
 void *handle_connection(void *vargp);

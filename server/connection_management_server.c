@@ -66,9 +66,9 @@ void *handle_connection(void *vargp)
         ////////////////////////////////////////////////////////////////////////////
 
     //loop until connection needs to be closed
-	printf("First%s \n",client_response);
+	//printf("First%s \n",client_response);
 	strcpy(client_response,"\0");
-	printf("Second%s \n",client_response);
+	//printf("Second%s \n",client_response);
     char *client_response_smth;
     while(!close_connections)
     {
@@ -98,9 +98,9 @@ void *handle_connection(void *vargp)
 			printf("----");
 		}
 	  }
-	
+
 	  free(client_response_smth);
-	  
+
         }
 
     }

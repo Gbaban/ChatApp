@@ -28,7 +28,7 @@ void INThandler(int sig)
 }
 
 
-int main(int argv,char *argc[])
+int main(int argc,char *argv[])
 {
 
     signal(SIGINT, INThandler);
@@ -44,7 +44,7 @@ int main(int argv,char *argc[])
     server_address.sin_family = AF_INET;
 
     //setare port
-    char * port=get_ip_port(argv,argc,GET_PORT);
+    char * port=get_ip_port(argc,argv,GET_PORT);
     if(port!=NULL)
         server_address.sin_port = htons(atoi(port));
     else
@@ -52,7 +52,7 @@ int main(int argv,char *argc[])
 
 
     //setare ip
-    char * ip=get_ip_port(argv,argc,GET_IP);
+    char * ip=get_ip_port(argc,argv,GET_IP);
     if(ip!=NULL)
         server_address.sin_addr.s_addr=inet_addr(ip);
     else

@@ -20,42 +20,16 @@ void print_header()
 }
 
 
-char *pack_message(char *message, int bit){
+char *pack_message(char *message, char flags ){
 
 	char message_length;
 	message_length = strlen(message);
 
-	char header_data;
-	header_data = 0b00000000;
-	if(bit == 0){
-		header_data = 0b00000000;	//comanda
-	}
-	if(bit == 1){
-		header_data = 0b10000000;	//mesaj
-	}
-
-	if(bit == 2){
-		header_data = 0b01000000;	//login
-	}
-
-	if(bit == 3){
-		header_data = 0b00100000;	//signup
-	}
-
 	char *final_message = (char *) malloc(258);
 	final_message[0] = message_length+1;
-    	final_message[1] = header_data;
+    	final_message[1] = flags;
 
-/*
-    int i;
-
-    for (i = 0; i < strlen(message); i++)
-    {
-        final_message[i + 2] = message[i];
-    }
-*/
-
-	strcat(final_message,message);	
+	strcat(final_message,message);
     printf("final: %d %d %s\n",final_message[0],final_message[1],final_message+2);
 
 	return final_message;
@@ -78,7 +52,7 @@ void message_loop(int socket)
         }
         else
         {
-			strcpy(message, pack_message(message, 1));
+			strcpy(message, pack_message(message, MESSAGE));
             send(socket, message, strlen(message), 0);
         }
     }
@@ -127,7 +101,7 @@ void signup(int socket)
 		strcat(signup_message, username);
 		strcat(signup_message, " -p ");
 		strcat(signup_message, password);
-		strcpy(signup_message, pack_message(signup_message, 3));
+		strcpy(signup_message, pack_message(signup_message, SIGNUP));
 
         send(socket, signup_message, strlen(signup_message), 0);
     }
@@ -135,7 +109,7 @@ void signup(int socket)
     {
         printf("The repeated password must be identical to the original!\n");
     }
-	
+
 	fflush(stdin);
     message_loop(socket);
 }
@@ -171,7 +145,7 @@ void login(int socket)
 	strcat(login_message, username);
 	strcat(login_message, " -p ");
 	strcat(login_message, password);
-	strcpy(login_message, pack_message(login_message, 2));
+	strcpy(login_message, pack_message(login_message, LOGIN));
 
 	//TODO check if logged in before entering chat room
     message_loop(socket);
@@ -180,7 +154,7 @@ void login(int socket)
 void disconnect_client(int socket)
 {
     char message[] = "-d";
-    send(socket,pack_message(message,0),strlen(pack_message(message,0)),0);
+    send(socket,pack_message(message,COMMAND),strlen(pack_message(message,COMMAND)),0);
 
     close(socket);
 
@@ -208,4 +182,23 @@ void menu(pthread_t tid, int socket)
             default: { printf("\nERROR: Invalid input!\n"); }
         }
     } while (input != 0);
+}
+
+
+char * get_ip_port(int argv,char *argc[],int optiune)
+{
+
+	int i;
+
+    for( i=1;i<argv;i++)
+        if(optiune==GET_PORT&&i<argv&&strcmp(argc[i],"-p")==0)
+        {
+            return argc[i+1];
+        }
+        else if(optiune==GET_IP&&i<argv&&strcmp(argc[i],"-ip")==0)
+        {
+            return argc[i+1];
+        }
+    return NULL;
+
 }

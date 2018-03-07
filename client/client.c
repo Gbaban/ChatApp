@@ -14,29 +14,22 @@
 #include "connection_utils.h"
 #include "app_utils.h"
 
+#define PORT 9002
+
 int main(int argc, char *argv[])
 {
     int status, network_socket;
     pthread_t tid;
-    struct sigaction *sa;
 
-	if(argc != 2){
-		printf("please specify the port\n");
-		exit(0);
-	}
-
-	
-    /*sa->sa_handler = &disconnect_client;
-
-    if (sigaction(SIGINT,sa,NULL) < 0)
-    {
-        printf("Error assigning disconnect handler\n");
-        exit(1);
-    }*/
+    char * port=get_ip_port(argc,argv,GET_PORT);
+    if(port!=NULL)
+        network_socket = setup_socket(atoi(port));
+    else
+        network_socket = setup_socket(PORT);
 
     signal(SIGINT, disconnect_client);
 
-    network_socket = setup_socket(atoi(argv[1]));
+
 
     if ((tid = pthread_create(&tid,NULL,listen_to_server,(void *)&network_socket)) < 0)
     {

@@ -16,6 +16,8 @@
 
 int setup_socket(int port)
 {
+
+    //printf("Setup_socket\n");
     int network_socket;
     network_socket = socket(AF_INET,SOCK_STREAM,0);
     if (!network_socket)
@@ -110,7 +112,7 @@ void* listen_to_server(void *void_arg)
           printf("Error while listening to server\n");
         }
         else{
-	server_message[header[0]] = 0;	
+	server_message[header[0]] = 0;
         server_message_interpreter(server_message,header);
       }
     }
