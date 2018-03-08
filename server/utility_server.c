@@ -197,7 +197,7 @@ int messageInterpreter(const char client_header[2], const char *client_response_
   {
     case LOGIN:
 		{
-			printf("This is a login\n");
+			printf("[messageInterpreter]This is a login\n");
 			int return_value =  login(client_response_smth,client_header[0]);
 			if (return_value == LOGIN_SUCCESS)
 			{
@@ -205,7 +205,7 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 				char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
 				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
 				logedin_user_dimension++;
-				printf("User <%s> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
+				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
 			}
 			return return_value;
 		}break;

@@ -49,13 +49,13 @@ void message_loop(int socket)
   {
         if (strchr(message,29))
         {
-          printf("ctrl+]\n");
+          printf("[message_loop]ctrl+]\n");
           //TODO sendCommand() implementation to scan input and send commands to server with COMMAND header
           //sendCommand();
         }
         else if (strlen(message) > 256)
         {
-            printf("Messages should be lower than 256 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Messages should be less than 256 characters"     ANSI_COLOR_RESET "\n");
         }
         else
         {
@@ -78,7 +78,7 @@ void signup(int socket)
         scanf("%99s",username);
         if (strlen(username) >= 30)
         {
-            printf("Username should be lower than 30 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Username should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
     } while (strlen(username) >= 30);
 
@@ -88,7 +88,7 @@ void signup(int socket)
         scanf("%99s",password);
         if (strlen(username) >= 30)
         {
-            printf("Password should be lower than 30 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
     } while (strlen(password) >= 30);
 
@@ -98,7 +98,7 @@ void signup(int socket)
         scanf("%99s",repeated_password);
         if (strlen(username) >= 30)
         {
-            printf("Password should be lower than 30 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
     } while (strlen(repeated_password) >= 30);
 
@@ -116,7 +116,7 @@ void signup(int socket)
     }
     else
     {
-        printf("The repeated password must be identical to the original!\n");
+        printf(ANSI_COLOR_YELLOW     "The repeated password must be identical to the original!"     ANSI_COLOR_RESET "\n");
     }
 
 	fflush(stdin);
@@ -134,7 +134,7 @@ void login(int socket)
         scanf("%99s",username);
         if (strlen(username) >= 30)
         {
-            printf("Username should be lower than 30 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Username should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
     } while (strlen(username) >= 30);
 
@@ -144,7 +144,7 @@ void login(int socket)
         scanf("%99s",password);
         if (strlen(username) >= 30)
         {
-            printf("Password should be lower than 30 characters\n");
+            printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
     } while (strlen(password) >= 30);
 
@@ -168,12 +168,12 @@ void disconnect_client(int sig)
 
     if(send(disconect_socket,pack_message(message,COMMAND),strlen(pack_message(message,COMMAND)),0) < 0)
     {
-      printf("Error on send\n");
+      printf(ANSI_COLOR_RED     "[disconnect_client]Error on send"     ANSI_COLOR_RESET "\n");
     }
 
     close(disconect_socket);
 
-    printf("You have disconnected\n");
+    printf(ANSI_COLOR_BLUE    "You have disconnected"    ANSI_COLOR_RESET "\n");
 
     exit(0);
 }
@@ -194,7 +194,7 @@ void menu(pthread_t tid, int socket)
             case 1: { signup(socket); input = 0; break; }
             case 2: { login(socket); input = 0; break; }
             case 0: { disconnect_client(socket); break; }
-            default: { printf("\nERROR: Invalid input!\n"); }
+            default: { printf("\n" ANSI_COLOR_RED     "ERROR: Invalid input!"     ANSI_COLOR_RESET "\n"); }
         }
     } while (input != 0);
 }

@@ -24,7 +24,7 @@ int setup_socket(int port)
     network_socket = socket(AF_INET,SOCK_STREAM,0);
     if (!network_socket)
     {
-        printf("Error creating socket in client\n");
+        printf(ANSI_COLOR_RED     "[setup_socket]Error creating socket in client"     ANSI_COLOR_RESET "\n");
         exit(0);
     }
 
@@ -36,7 +36,7 @@ int setup_socket(int port)
 
     if (connect(network_socket,(struct sockaddr *) &server_address,sizeof(server_address)) < 0)
     {
-        printf("Error establishing connection in client socket\n");
+        printf(ANSI_COLOR_RED     "[setup_socket]Error establishing connection in client socket"     ANSI_COLOR_RESET "\n");
         exit(0);
     }
 
@@ -48,13 +48,13 @@ int setup_socket(int port)
     unsigned char header[2];
     if (recv(network_socket,header,2,MSG_WAITALL) < 0)
     {
-        printf("Error while listening to server\n");
+        printf(ANSI_COLOR_RED     "[setup_socket]Error while listening to server"     ANSI_COLOR_RESET "\n");
         close(network_socket);
     }
     //MSG_WAITALL
     else if(recv(network_socket,server_response,header[0],MSG_WAITALL) < 0)
     {
-      printf("Error while listening to server\n");
+      printf(ANSI_COLOR_RED     "[setup_socket]Error while listening to server"     ANSI_COLOR_RESET "\n");
       close(network_socket);
     }
     else{
@@ -70,31 +70,17 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
     //printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
 
-	/*char message_length[1];
-	message_length[0] = server_message[0];
-
-	char header_data[1];
-	header_data[0] = server_message[1];
-
-	char *body_message = (char *) malloc(256);
-	body_message = server_message + 2;
-
-	if(strlen(body_message) != message_length[0]){
-		printf("Some bits got lost\n");
-		exit(3);
-	}
-  */
     switch(header[1])
     {
-        case MESSAGE: { printf("mesaj: %s\n",server_message); break; } //mesaj
-        case LOGIN: { printf("login\n"); break; } //login
-        case SIGNUP: { printf("signup\n"); break; } //signup
+        case MESSAGE: { printf("[server_message_interpreter]mesaj: %s\n",server_message); break; } //mesaj
+        case LOGIN: { printf("[server_message_interpreter]login\n"); break; } //login
+        case SIGNUP: { printf("[server_message_interpreter]signup\n"); break; } //signup
         case COMMAND:
         {
-          printf("comanda : %s\n", server_message);
+          printf("[server_message_interpreter]comanda : %s\n", server_message);
           if(strstr(server_message,"-d"))
           {
-              printf("Closing socket\n");
+              printf("[server_message_interpreter]Closing socket\n");
               disconnect_client(0);
           }
 
@@ -117,17 +103,17 @@ void* listen_to_server(void *void_arg)
     {
         if (recv(network_socket,header,2,0) < 2)
         {
-            printf("Error while listening to server1\n");
+            printf(ANSI_COLOR_RED     "[listen_to_server]Error while listening to server"     ANSI_COLOR_RESET "\n");
             exit(1);
         }
         else if(recv(network_socket,server_message,header[0],0) < header[0])
         {
-          printf("Error while listening to server2\n");
+          printf(ANSI_COLOR_RED     "[listen_to_server]Error while listening to server"     ANSI_COLOR_RESET "\n");
         }
         else{
 	         server_message[header[0]] = 0;
-           printf("Header %d %d\n",header[0],header[1]);
-           printf("Response: %s\n", server_message);
+           printf("[listen_to_server]Header %d %d\n",header[0],header[1]);
+           printf("[listen_to_server]Response: %s\n", server_message);
         server_message_interpreter(server_message,header);
         strcpy(server_message,"");
       }

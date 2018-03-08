@@ -63,7 +63,7 @@ int main(int argc,char *argv[])
     //bind the server socket to the address and port
     if (bind(server_socket,(struct sockaddr *) &server_address,sizeof(server_address)) < 0)
     {
-        printf("Error binding server socket\n");
+        printf(ANSI_COLOR_RED     "[main]Error binding server socket"     ANSI_COLOR_RESET "\n");
         exit(0);
     }
     ////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ int main(int argc,char *argv[])
     //listen for connections
     if (listen(server_socket,5) < 0)
     {
-        printf("Error in listening server socket\n");
+        printf(ANSI_COLOR_RED     "[main]Error in listening server socket"     ANSI_COLOR_RESET "\n");
         exit(0);
     }
     ////////////////////////////////////////////////////////////////////////////////

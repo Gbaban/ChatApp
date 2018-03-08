@@ -167,7 +167,7 @@ void manage_multiple_connections(int server_socket)
 
         if (client_socket < 0)
         {
-            printf("Error accepting client socket\n");
+            printf(ANSI_COLOR_RED     "[manage_multiple_connections]Error accepting client socket"     ANSI_COLOR_RESET "\n");
             exit(0);
         }
 

@@ -26,7 +26,7 @@
 #define SUCCESS 254
 
 typedef struct{
-  char name[20];
+  char name[31];
   int socket;
 }client_t;
 
