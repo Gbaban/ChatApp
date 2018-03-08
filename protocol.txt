@@ -36,6 +36,9 @@ Autentificare: client->server user si parola
 Deconectare: server->client comanda cu -d ca parametru
 							client->serve comanda cu -d ca parametru
 
+ListAll: client->server comanda cu listall ca parametru
+					server->client mesaj "Server:<nume1>,<nume1>,...<numeN>"
+
 #define FAIL 0
 #define LOGIN_SUCCESS 1
 #define LOGIN_FAIL 2
