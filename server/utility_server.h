@@ -18,7 +18,7 @@ char ** extract_user_name_password(const char *client_response_smth,int n);
 int isInFile(char **name_password);
 int login(const char *client_response_smth,int n);
 int signup(const char *client_response_smth,int n);
-char *pack_message(char *original_message, char flags);
+char *pack_message(char *original_message,unsigned char flags);
 int command(const char *client_response_smth,int client_socket);
 int messageInterpreter(const char client_header[2], const char *client_response_smth, int client_socket);
 

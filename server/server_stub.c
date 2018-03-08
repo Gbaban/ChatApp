@@ -32,6 +32,7 @@ int main(int argc,char *argv[])
 {
 
     signal(SIGINT, INThandler);
+    logedin_user_dimension=0;
 
 
     //create the server socket

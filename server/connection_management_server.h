@@ -25,6 +25,14 @@
 #define SIGNUP_FAIL 4
 #define SUCCESS 254
 
+typedef struct{
+  char name[20];
+  int socket;
+}client_t;
+
+client_t logedin_user_sockets[1000];
+int logedin_user_dimension;
+
 
 void *handle_connection(void *vargp);
 void manage_multiple_connections(int server_socket);

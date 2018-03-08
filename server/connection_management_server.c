@@ -1,16 +1,16 @@
 #include "connection_management_server.h"
 #include "utility_server.h"
 
-int client_sockets[100];
-int client_sockets_dimension=0;
-int nr=0;//doar verificare sa vad daca functioneaza bine
+//int client_sockets[100];
+//int client_sockets_dimension=0;
+//int nr=0;//doar verificare sa vad daca functioneaza bine
 int close_connections = 0;
+
 
 ////////////////////////////////////////////////////////////ss/////////////////////////////////
 void *handle_connection(void *vargp)
 {
 
-    nr++;
     int client_socket=*((int *)vargp);
     unsigned char client_header[2];
     char client_response[256];
@@ -30,7 +30,7 @@ void *handle_connection(void *vargp)
     //trimite raspunsul la toate socket-urile---de avut grija cand clientul va functiona
     //sa nu mai trimitem inapoi mesajul si acelui client care l-a trimis
     //ca va fi afisat in consola lui de 2 ori
-    printf("The client sent the following data here: %s %d\n",client_response,nr);
+    printf("The client sent the following data here: %s %d\n",client_response,logedin_user_dimension);
     //sprintf(server_message,"%s %d\n",server_message,nr);
     char *message = pack_message("You have reached the server!",MESSAGE);
     //printf("Sending message\n");
@@ -53,7 +53,7 @@ void *handle_connection(void *vargp)
           if (recv(client_socket,client_header,2,0) < 2)
         {
                 printf("Error recieving data from client1\n");
-                //exit(1);
+                exit(1);
         }
         else if ((recv(client_socket,client_response_smth,client_header[0],MSG_WAITALL) < client_header[0]))
         {
@@ -66,17 +66,24 @@ void *handle_connection(void *vargp)
           printf("Header %d %d\n",client_header[0],client_header[1]);
           printf("Response: %s\n", client_response_smth);
 
+
     //printf("Header compare:%d %d %d\n",client_header[1], MESSAGE, client_header[1] == MESSAGE);
     if(client_header[1] == MESSAGE)
     {
     	  int i=0;
-              for(;i<client_sockets_dimension;i++)
+              char *message1 = NULL;
+              message1=pack_message(client_response_smth,MESSAGE);
+              for(;i<logedin_user_dimension;i++)
            	  {
-              		if(client_sockets[i]!=client_socket)
+                printf("Users: %s\n",client_response_smth);
+              		if(logedin_user_sockets[i].socket!=client_socket)
               		{
-              			char *message1=pack_message(client_response_smth,MESSAGE);
-              		  	send(client_sockets[i],message1,strlen(message1),0);
-              			printf("----");
+                    printf("Message1: %s\n",message1+2);
+              		  if(	send(logedin_user_sockets[i].socket,message1,strlen(message1),0) < strlen(message1)  )
+                    {
+                      printf("Error on send\n");
+                    }
+              			printf("----\n");
               		}
     	  }
     }
@@ -89,10 +96,13 @@ void *handle_connection(void *vargp)
         printf("Malloc error\n");
         exit(3);
       }
-      sprintf(return_value,"%d",messageInterpreter(client_header,client_response_smth,client_socket));
+
+      int return_value_int = messageInterpreter(client_header,client_response_smth,client_socket);
+
+      sprintf(return_value,"%d",return_value_int);
       return_value = pack_message(return_value,client_header[1]);
       send(client_socket,return_value,strlen(return_value),0);
-      free(return_value);
+      //free(return_value);
     }
 
 	  free(client_response_smth);
@@ -122,10 +132,10 @@ void close_all_connections()
 {
   int i;
   char *close_message = pack_message("-d",COMMAND);
-  for(i=0;i<nr;i++)
+  for(i=0;i<logedin_user_dimension;i++)
   {
     printf("Sending...\n");
-    if(send(client_sockets[i],close_message,strlen(close_message),0) <0)
+    if(send(logedin_user_sockets[i].socket,close_message,strlen(close_message),0) <0)
     {
       printf("Error on send\n");
     }
@@ -162,8 +172,17 @@ void manage_multiple_connections(int server_socket)
         }
 
         //pastrarea tuturor clientilor
-        client_sockets[client_sockets_dimension]=client_socket;
+      /*  client_sockets[client_sockets_dimension]=client_socket;
         client_sockets_dimension++;
+        int index;
+        for(index = 0; index < client_sockets_dimension;i++)
+        {
+          if(!client_sockets[index])
+          {
+              client_sockets[index] = client_sockets[client_sockets_dimension-1];
+              client_sockets_dimension--;
+          }
+        }*/
         /////////////////////////////////////////////////////////////
 
 

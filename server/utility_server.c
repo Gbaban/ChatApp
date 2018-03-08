@@ -142,24 +142,26 @@ int signup(const char *client_response_smth,int n)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-char *pack_message(char *original_message, char flags)
+char *pack_message(char *original_message, unsigned char flags)
 {
   unsigned char message_lenght = (unsigned char)strlen(original_message);
-  char message_flags = (char)flags;
 
-  char *new_message = (char *) malloc(259);
+  char *new_message = NULL;
+	new_message =  (char *)malloc(259);
   if(!new_message)
   {
     printf("Fail on malloc");
     exit(2);
   }
 
+	printf("NewMessage: %s\n",new_message);
+
   new_message[0] = message_lenght;
-  new_message[1] = message_flags;
+  new_message[1] = (char)flags;
 
   strcat(new_message,original_message);
 
-    printf("Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, new_message);
+    printf("Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
 
   return new_message;
 
@@ -189,8 +191,20 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 {
   switch(client_header[1])
   {
-    case LOGIN: printf("This is a login\n");return login(client_response_smth,client_header[0]);
-	break;
+    case LOGIN:
+		{
+			printf("This is a login\n");
+			int return_value =  login(client_response_smth,client_header[0]);
+			if (return_value == LOGIN_SUCCESS)
+			{
+				logedin_user_sockets[logedin_user_dimension].socket = client_socket;
+				char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
+				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
+				logedin_user_dimension++;
+				printf("User <%s> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
+			}
+			return return_value;
+		}break;
     case SIGNUP: printf("This is signup\n");return signup(client_response_smth,client_header[0]);break;
     case COMMAND: printf("This is a command\n"); return command(client_response_smth,client_socket);break;
     default: printf("Unhandled header parameter\n");break;
