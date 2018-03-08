@@ -84,7 +84,7 @@ int isInFile(char **name_password){
 	   return IS_REGISTERED;
 	}
    }
-  close(fileno(fp));
+ close(fileno(fp));
   return IS_NOT_REGISTERED;
 
 }
@@ -127,8 +127,10 @@ int signup(const char *client_response_smth,int n)
   }
   if(isInFile(name_password)==IS_REGISTERED) {printf("mai este asta incaodata\n");//return SIGNUP_FAIL;
 	}
+ printf("am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
   fprintf(fp, "%s %s\n",name_password[0],name_password[1]); 
+  fflush(fp);
   close(fileno(fp));
 
   return SIGNUP_SUCCESS;
