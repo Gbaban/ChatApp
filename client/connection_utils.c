@@ -89,7 +89,7 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
         case MESSAGE: { printf("mesaj: %s\n",server_message); break; } //mesaj
         case LOGIN: { printf("login\n"); break; } //login
         case SIGNUP: { printf("signup\n"); break; } //signup
-        case COMMAND: { printf("comanda : %s\n", server_message); break; } //comanda
+        case COMMAND: { printf("comanda : %s\n", server_message);disconnect_client(0); break; } //comanda
     }
 
 	   //free(server_message);

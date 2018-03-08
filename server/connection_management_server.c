@@ -33,29 +33,37 @@ char *pack_message(char *original_message, char flags)
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
-int login(client_response_smth)
+int login(const char *client_response_smth)
 {
   return LOGIN_SUCCESS;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
-int signup(client_response_smth)
+int signup(const char *client_response_smth)
 {
   return SIGNUP_SUCCESS;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
-int command(client_response_smth)
+int command(const char *client_response_smth,int client_socket)
 {
+
+  if(strstr(client_response_smth,"-d"))
+  {
+      printf("Closing client socket\n");
+      close(client_socket);
+      pthread_cancel(pthread_self());
+  }
+
   return SUCCESS;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-int messageImterpreter(const char client_header[2], const char *client_response_smth)
+int messageInterpreter(const char client_header[2], const char *client_response_smth, int client_socket)
 {
   switch(client_header[1])
   {
     case LOGIN: printf("This is a login\n");return login(client_response_smth);break;
     case SIGNUP: printf("This is signup\n");return signup(client_response_smth);break;
-    case COMMAND: printf("This is a command\n"); return command(client_response_smth);break;
+    case COMMAND: printf("This is a command\n"); return command(client_response_smth,client_socket);break;
     default: printf("Unhandled header parameter\n");break;
   }
   return FAIL;
@@ -137,8 +145,8 @@ void *handle_connection(void *vargp)
     }
     else
     {
-      printf("messageImterpreter\n");
-      messageImterpreter(client_header,client_response_smth);
+      printf("messageInterpreter\n");
+      messageInterpreter(client_header,client_response_smth,client_socket);
     }
 
 	  free(client_response_smth);
@@ -155,7 +163,7 @@ void *handle_connection(void *vargp)
     printf("Sent...\n");
     close(client_socket);*/
 
-    free(message);
+  //  free(message);
 
 
 
@@ -176,7 +184,7 @@ void close_all_connections()
       printf("Error on send\n");
     }
     printf("Sent...\n");
-    close(client_sockets[i]);
+    //close(client_sockets[i]);
   }
 
   free(close_message);
