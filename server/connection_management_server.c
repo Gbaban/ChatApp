@@ -1,73 +1,10 @@
 #include "connection_management_server.h"
-
+#include "utility_server.h"
 
 int client_sockets[100];
 int client_sockets_dimension=0;
 int nr=0;//doar verificare sa vad daca functioneaza bine
 int close_connections = 0;
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-char *pack_message(char *original_message, char flags)
-{
-  unsigned char message_lenght = (unsigned char)strlen(original_message);
-  char message_flags = (char)flags;
-
-  char *new_message = (char *) malloc(259);
-  if(!new_message)
-  {
-    printf("Fail on malloc");
-    exit(2);
-  }
-
-  new_message[0] = message_lenght;
-  new_message[1] = message_flags;
-
-  strcat(new_message,original_message);
-
-    printf("Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, new_message);
-
-  return new_message;
-
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-int login(const char *client_response_smth)
-{
-  return LOGIN_SUCCESS;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-int signup(const char *client_response_smth)
-{
-  return SIGNUP_SUCCESS;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-int command(const char *client_response_smth,int client_socket)
-{
-
-  if(strstr(client_response_smth,"-d"))
-  {
-      printf("Closing client socket\n");
-      close(client_socket);
-      pthread_cancel(pthread_self());
-  }
-
-  return SUCCESS;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-int messageInterpreter(const char client_header[2], const char *client_response_smth, int client_socket)
-{
-  switch(client_header[1])
-  {
-    case LOGIN: printf("This is a login\n");return login(client_response_smth);break;
-    case SIGNUP: printf("This is signup\n");return signup(client_response_smth);break;
-    case COMMAND: printf("This is a command\n"); return command(client_response_smth,client_socket);break;
-    default: printf("Unhandled header parameter\n");break;
-  }
-  return FAIL;
-}
 
 ////////////////////////////////////////////////////////////ss/////////////////////////////////
 void *handle_connection(void *vargp)

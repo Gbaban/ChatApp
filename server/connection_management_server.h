@@ -26,12 +26,8 @@
 #define SUCCESS 254
 
 
-
 void *handle_connection(void *vargp);
 void manage_multiple_connections(int server_socket);
 void close_all_connections();
-char *pack_message(char *original_message, char flags);
-void close_all_connections();
-
 
 #endif // CONNECTION_MANAGEMENT_SERVER_H_INCLUDED
