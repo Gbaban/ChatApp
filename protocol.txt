@@ -35,3 +35,10 @@ Autentificare: client->server user si parola
 
 Deconectare: server->client comanda cu -d ca parametru
 							client->serve comanda cu -d ca parametru
+
+#define FAIL 0
+#define LOGIN_SUCCESS 1
+#define LOGIN_FAIL 2
+#define SIGNUP_SUCCESS 3
+#define SIGNUP_FAIL 4
+#define SUCCESS 254
