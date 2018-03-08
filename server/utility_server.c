@@ -98,12 +98,12 @@ int login(const char *client_response_smth,int n)
 {
    char **name_password=extract_user_name_password(client_response_smth,n);
    
-   if(isInFile(name_password)==IS_REGISTERED) {printf("l-am gasit\n");//return LOGIN_SUCCESS;
+   if(isInFile(name_password)==IS_REGISTERED) {printf("l-am gasit\n");return LOGIN_SUCCESS;
    }
 
    
-   //return LOGIN_FAIL;
-   return LOGIN_SUCCESS;
+   return LOGIN_FAIL;
+   
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
