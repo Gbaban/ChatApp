@@ -110,14 +110,14 @@ void *handle_connection(void *vargp)
                 printf("Error recieving data from client1\n");
                 //exit(1);
         }
-        else if ((recv(client_socket,client_response_smth,client_header[0]-1,MSG_WAITALL) < client_header[0]-1))
+        else if ((recv(client_socket,client_response_smth,client_header[0],MSG_WAITALL) < client_header[0]))
         {
                 printf("Error recieving data from client2\n");
                 //exit(1);
         }
         else
         {
-	  client_response_smth[client_header[0]-1] = 0;
+	  client_response_smth[client_header[0]] = 0;
           printf("Header %d %d\n",client_header[0],client_header[1]);
           printf("Response: %s\n", client_response_smth);
 

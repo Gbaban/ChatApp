@@ -20,17 +20,17 @@ void print_header()
 }
 
 
-char *pack_message(char *message, char flags ){
+char *pack_message(char *message,unsigned char flags ){
 
 	char message_length;
 	message_length = strlen(message);
 
 	char *final_message = (char *) malloc(258);
-	final_message[0] = message_length+1;
+	final_message[0] = message_length;
     	final_message[1] = flags;
 
 	strcat(final_message,message);
-    printf("final: %d %d %s\n",final_message[0],final_message[1],final_message+2);
+    printf("final: %d %d %s\n",final_message[0],flags,final_message+2);
 
 	return final_message;
 }

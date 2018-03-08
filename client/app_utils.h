@@ -12,7 +12,7 @@
 int disconect_socket;
 
 void print_header();
-char *pack_message(char *message, char flags);
+char *pack_message(char *message, unsigned char flags);
 void disconnect_client();
 void menu();
 char * get_ip_port(int argv,char *argc[],int optiune);

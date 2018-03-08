@@ -45,7 +45,7 @@ int setup_socket(int port)
     send(network_socket,pack_message(message,1),strlen(pack_message(message,1)),0);
 
     char server_response[256];
-    char header[2];
+    unsigned char header[2];
     if (recv(network_socket,header,2,MSG_WAITALL) < 0)
     {
         printf("Error while listening to server\n");
@@ -65,7 +65,7 @@ int setup_socket(int port)
     return network_socket;
 }
 
-void server_message_interpreter(char *server_message, char header[2])
+void server_message_interpreter(char *server_message, unsigned char header[2])
 {
     //printf("Recieved from server: %s\n",server_message);
     //TODO based on protocol, interepret message from server and act accordingly
@@ -99,7 +99,7 @@ void server_message_interpreter(char *server_message, char header[2])
 void* listen_to_server(void *void_arg)
 {
     char server_message[256];
-    char header[2];
+    unsigned char header[2];
 
     int network_socket = *((int *)void_arg);
 
