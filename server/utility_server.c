@@ -120,7 +120,7 @@ int signup(const char *client_response_smth,int n)
 
   char **name_password=extract_user_name_password(client_response_smth,n);
   FILE * fp;
-  if((fp = fopen ("./clienti", "a"))==NULL){
+  if((fp = fopen ("./clienti", "a+"))==NULL){
 
 	printf("nu a putut fi deschis fisierul\n");
         exit(0);
