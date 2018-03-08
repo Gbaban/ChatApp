@@ -125,7 +125,7 @@ int signup(const char *client_response_smth,int n)
 	printf("nu a putut fi deschis fisierul\n");
         exit(0);
   }
-  if(isInFile(name_password)==IS_REGISTERED) {printf("mai este asta incaodata\n");//return SIGNUP_FAIL;
+  if(isInFile(name_password)==IS_REGISTERED) {printf("mai este asta incaodata\n");return SIGNUP_FAIL;
 	}
  printf("am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
