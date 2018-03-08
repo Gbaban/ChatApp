@@ -37,7 +37,7 @@ char ** extract_user_name_password(const char *client_response_smth,int n){
   memset(nume,0,50);
   int dimensiuneparola=0;
   int dimensiunenume=0;
-	printf("tot mesajul-----%s\n",client_response_smth);
+	printf("[extract_user_name_password]tot mesajul-----%s\n",client_response_smth);
   for(;i<n;i++)
 	if(client_response_smth[i]=='-'&&i+1<n&&client_response_smth[i+1]=='u'){
 		int j=i+3;
@@ -71,7 +71,7 @@ int isInFile(char **name_password){
    FILE *fp;
    if((fp=fopen("./totallyLegitSecureUserDB.user","r"))==NULL){
 
-	   printf("nu a putut fi deschis fisierul\n");
+	   printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
            exit(1);
    }
    char nume[50];
@@ -98,10 +98,11 @@ int login(const char *client_response_smth,int n)
 {
    char **name_password=extract_user_name_password(client_response_smth,n);
 
-   if(isInFile(name_password)==IS_REGISTERED) {printf("l-am gasit\n");return LOGIN_SUCCESS;
+   if(isInFile(name_password)==IS_REGISTERED)
+	 {
+		 	printf(ANSI_COLOR_GREEN   "[login]User found"   ANSI_COLOR_RESET "\n");return LOGIN_SUCCESS;
    }
-
-
+	 printf(ANSI_COLOR_RED     "[login]User NOT found"     ANSI_COLOR_RESET "\n");
    return LOGIN_FAIL;
 
 }
@@ -122,12 +123,15 @@ int signup(const char *client_response_smth,int n)
   FILE * fp;
   if((fp = fopen ("./totallyLegitSecureUserDB.user", "a+"))==NULL){
 
-	printf("nu a putut fi deschis fisierul\n");
+	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
         exit(0);
   }
-  if(isInFile(name_password)==IS_REGISTERED) {printf("mai este asta incaodata\n");return SIGNUP_FAIL;
+  if(isInFile(name_password)==IS_REGISTERED)
+	{
+		printf(ANSI_COLOR_YELLOW  "[signup]User already in DB"  ANSI_COLOR_RESET "\n");
+		return SIGNUP_FAIL;
 	}
- printf("am ajns aicici %s %s \n",name_password[0],name_password[1]);
+ //printf("[signup]am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
   fprintf(fp, "%s %s\n",name_password[0],name_password[1]);
   fflush(fp);
@@ -154,14 +158,14 @@ char *pack_message(char *original_message, unsigned char flags)
     exit(2);
   }
 
-	printf("NewMessage: %s\n",new_message);
+	//printf("NewMessage: %s\n",new_message);
 
   new_message[0] = message_lenght;
   new_message[1] = (char)flags;
 
   strcat(new_message,original_message);
 
-    printf("Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
+    printf("[pack_message]Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
 
   return new_message;
 
