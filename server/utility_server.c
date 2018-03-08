@@ -209,9 +209,22 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 			}
 			return return_value;
 		}break;
-    case SIGNUP: printf("This is signup\n");return signup(client_response_smth,client_header[0]);break;
-    case COMMAND: printf("This is a command\n"); return command(client_response_smth,client_socket);break;
-    default: printf("Unhandled header parameter\n");break;
+    case SIGNUP:
+		{
+			printf("[messageInterpreter]This is signup\n");
+			int return_value_signup =  signup(client_response_smth,client_header[0]);
+			if (return_value_signup == SIGNUP_SUCCESS)
+			{
+				logedin_user_sockets[logedin_user_dimension].socket = client_socket;
+				char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
+				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
+				logedin_user_dimension++;
+				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
+			}
+			return return_value_signup;
+		}break;
+    case COMMAND: printf("[messageInterpreter]This is a command\n"); return command(client_response_smth,client_socket);break;
+    default: printf("[messageInterpreter]Unhandled header parameter\n");break;
   }
   return FAIL;
 }
