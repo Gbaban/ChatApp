@@ -83,7 +83,16 @@ void *handle_connection(void *vargp)
     else
     {
       printf("messageInterpreter\n");
-      messageInterpreter(client_header,client_response_smth,client_socket);
+      char *return_value = (char*)malloc(258);
+      if(!return_value)
+      {
+        printf("Malloc error\n");
+        exit(3);
+      }
+      sprintf(return_value,"%d",messageInterpreter(client_header,client_response_smth,client_socket));
+      return_value = pack_message(return_value,client_header[1]);
+      send(client_socket,return_value,strlen(return_value),0);
+      free(return_value);
     }
 
 	  free(client_response_smth);
