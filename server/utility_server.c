@@ -51,13 +51,13 @@ char ** extract_user_name_password(const char *client_response_smth,int n){
 		for(;j<n;j++)
 			password[dimensiuneparola++]=client_response_smth[j];
                 i=j;
-	
+
 	}
 
   char **name_password=(char **)malloc(sizeof(char *)*2);
 
   name_password[0]=nume;
-  name_password[1]=password;  
+  name_password[1]=password;
 
   return name_password;
 
@@ -69,7 +69,7 @@ char ** extract_user_name_password(const char *client_response_smth,int n){
 int isInFile(char **name_password){
 
    FILE *fp;
-   if((fp=fopen("./clienti","r"))==NULL){
+   if((fp=fopen("./totallyLegitSecureUserDB.user","r"))==NULL){
 
 	   printf("nu a putut fi deschis fisierul\n");
            exit(1);
@@ -97,13 +97,13 @@ int isInFile(char **name_password){
 int login(const char *client_response_smth,int n)
 {
    char **name_password=extract_user_name_password(client_response_smth,n);
-   
+
    if(isInFile(name_password)==IS_REGISTERED) {printf("l-am gasit\n");return LOGIN_SUCCESS;
    }
 
-   
+
    return LOGIN_FAIL;
-   
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,7 +120,7 @@ int signup(const char *client_response_smth,int n)
 
   char **name_password=extract_user_name_password(client_response_smth,n);
   FILE * fp;
-  if((fp = fopen ("./clienti", "a+"))==NULL){
+  if((fp = fopen ("./totallyLegitSecureUserDB.user", "a+"))==NULL){
 
 	printf("nu a putut fi deschis fisierul\n");
         exit(0);
@@ -129,7 +129,7 @@ int signup(const char *client_response_smth,int n)
 	}
  printf("am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
-  fprintf(fp, "%s %s\n",name_password[0],name_password[1]); 
+  fprintf(fp, "%s %s\n",name_password[0],name_password[1]);
   fflush(fp);
   close(fileno(fp));
 
@@ -197,6 +197,3 @@ int messageInterpreter(const char client_header[2], const char *client_response_
   }
   return FAIL;
 }
-
-
-
