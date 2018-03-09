@@ -30,9 +30,30 @@ char *pack_message(char *message,unsigned char flags ){
     	final_message[1] = flags;
 
 	strcat(final_message,message);
-    printf("final: %d %d %s\n",final_message[0],flags,final_message+2);
+    	//printf("final: %d %d %s\n",final_message[0],flags,final_message+2);
 
 	return final_message;
+}
+
+void sendCommand()
+{
+    char command[256];
+    
+    scanf("%255s",command);
+    
+    if (!strcmp(command,"listall"))
+    {
+        if(send(disconect_socket,pack_message(command,COMMAND),strlen(pack_message(command,COMMAND)),0) < 0)
+        {
+            printf(ANSI_COLOR_RED     "[sendCommand]Error on send"     ANSI_COLOR_RESET "\n");
+        }
+    }
+    else
+    {
+        printf(ANSI_COLOR_RED     "[sendCommand]Invalid command"     ANSI_COLOR_RESET "\n");
+    }
+    
+    //can be extended to further commands
 }
 
 void message_loop(int socket)
@@ -50,8 +71,7 @@ void message_loop(int socket)
         if (strchr(message,29))
         {
           printf("[message_loop]ctrl+]\n");
-          //TODO sendCommand() implementation to scan input and send commands to server with COMMAND header
-          //sendCommand();
+          sendCommand();
         }
         else if (strlen(message) > 256)
         {
@@ -60,7 +80,10 @@ void message_loop(int socket)
         else
         {
 		         strcpy(message, pack_message(message, MESSAGE));
-             send(socket, message, strlen(message), 0);
+             if (send(socket, message, strlen(message), 0) < 0)
+             {
+             	printf("[message_loop]Error sending message\n");
+             }
         }
     }
   }
@@ -111,7 +134,10 @@ void signup(int socket)
 		strcat(signup_message, password);
 		strcpy(signup_message, pack_message(signup_message, SIGNUP));
     //printf("Sending.......\n");
-        send(socket, signup_message, strlen(signup_message), 0);
+        if (send(socket, signup_message, strlen(signup_message), 0) < 0)
+        {
+             	printf("[signup]Error sending message\n");
+        }
     //printf("Sent\n");
     }
     else
@@ -156,7 +182,10 @@ void login(int socket)
 	strcat(login_message, password);
 	strcpy(login_message, pack_message(login_message, LOGIN));
 
-    send(socket, login_message, strlen(login_message), 0);
+    if(send(socket, login_message, strlen(login_message), 0) < 0)
+    {
+    	printf("[login]Error sending message\n");
+    }
 
 	//TODO check if logged in before entering chat room
     message_loop(socket);

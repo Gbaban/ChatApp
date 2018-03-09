@@ -42,7 +42,10 @@ int setup_socket(int port)
 
     //handshaking
     char message[] = "Sup, I connected!\n";
-    send(network_socket,pack_message(message,1),strlen(pack_message(message,1)),0);
+    if (send(network_socket,pack_message(message,1),strlen(pack_message(message,1)),0) < 0)
+    {
+    	printf("[setup_socket]Error sending message\n");
+    }
 
     char server_response[256];
     unsigned char header[2];
@@ -68,7 +71,6 @@ int setup_socket(int port)
 void server_message_interpreter(char *server_message, unsigned char header[2])
 {
     //printf("Recieved from server: %s\n",server_message);
-    //TODO based on protocol, interepret message from server and act accordingly
 
     switch(header[1])
     {
