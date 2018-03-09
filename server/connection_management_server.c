@@ -32,7 +32,7 @@ void *handle_connection(void *vargp)
     //ca va fi afisat in consola lui de 2 ori
     printf(ANSI_COLOR_BLUE    "The client sent the following data here: %s %d"    ANSI_COLOR_RESET "\n",client_response,logedin_user_dimension);
     //sprintf(server_message,"%s %d\n",server_message,nr);
-    char *message = pack_message("You have reached the server!",MESSAGE);
+    char *message = pack_message("You have reached the server!",MESSAGE,"Server");
     //printf("Sending message\n");
     send(client_socket,message,strlen(message),0);
     //printf("Message sent\n");
@@ -72,7 +72,8 @@ void *handle_connection(void *vargp)
     {
     	  int i=0;
               char *message1 = NULL;
-              message1=pack_message(client_response_smth,MESSAGE);
+              char *sender = getUsernameBySocket(client_socket);
+              message1=pack_message(client_response_smth,MESSAGE,sender);
               for(;i<logedin_user_dimension;i++)
            	  {
                 //printf("Users: %s\n",client_response_smth);
@@ -85,7 +86,7 @@ void *handle_connection(void *vargp)
                     }
               			printf("----");
               		}
-    	  }
+    	        }
     }
     else
     {
@@ -100,7 +101,7 @@ void *handle_connection(void *vargp)
       int return_value_int = messageInterpreter(client_header,client_response_smth,client_socket);
 
       sprintf(return_value,"%d",return_value_int);
-      return_value = pack_message(return_value,client_header[1]);
+      return_value = pack_message(return_value,client_header[1],NULL);
       send(client_socket,return_value,strlen(return_value),0);
       //free(return_value);
     }
@@ -131,15 +132,15 @@ void *handle_connection(void *vargp)
 void close_all_connections()
 {
   int i;
-  char *close_message = pack_message("-d",COMMAND);
+  char *close_message = pack_message("-d",COMMAND,NULL);
   for(i=0;i<logedin_user_dimension;i++)
   {
-    printf("Sending...\n");
+    //printf("[close_all_connections]Sending...\n");
     if(send(logedin_user_sockets[i].socket,close_message,strlen(close_message),0) <0)
     {
       printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
     }
-    printf("Sent...\n");
+    //printf("[close_all_connections]Sent...\n");
     //close(client_sockets[i]);
   }
 

@@ -142,11 +142,34 @@ int signup(const char *client_response_smth,int n)
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
+char *getUsernameBySocket(int client_socket)
+{
+	char *username =  (char *)malloc(31);
+	if(!username)
+	{
+		printf(ANSI_COLOR_RED     "[getUsernameBySocket]Fail on malloc"     ANSI_COLOR_RESET "\n");
+		exit(5);
+	}
+
+	int i;
+	for(;i<logedin_user_dimension;i++)
+	{
+		//printf("Users: %s\n",client_response_smth);
+			if(logedin_user_sockets[i].socket==client_socket)
+			{
+				strcpy(username,logedin_user_sockets[i].name);
+				return username;
+			}
+	}
+
+	return NULL;
+}
+
 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-char *pack_message(char *original_message, unsigned char flags)
+char *pack_message(char *original_message, unsigned char flags, const char *sender)
 {
   unsigned char message_lenght = (unsigned char)strlen(original_message);
 
@@ -154,7 +177,7 @@ char *pack_message(char *original_message, unsigned char flags)
 	new_message =  (char *)malloc(259);
   if(!new_message)
   {
-    printf("Fail on malloc");
+    printf(ANSI_COLOR_RED     "[pack_message]Fail on malloc"     ANSI_COLOR_RESET "\n");
     exit(2);
   }
 
@@ -163,13 +186,46 @@ char *pack_message(char *original_message, unsigned char flags)
   new_message[0] = message_lenght;
   new_message[1] = (char)flags;
 
+	if(sender)
+	{
+		strcat(new_message,sender);
+		strcat(new_message,": ");
+	}
   strcat(new_message,original_message);
+	new_message[0] = (unsigned char)strlen(new_message)-2;
 
     printf("[pack_message]Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
 
   return new_message;
 
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+char *listAll(int client_socket)
+{
+	char *activeUsers =  (char *)malloc(257);
+  if(!activeUsers)
+  {
+    printf(ANSI_COLOR_RED     "[listAll]Fail on malloc"     ANSI_COLOR_RESET "\n");
+    exit(4);
+  }
+	int i;
+	for(;i<logedin_user_dimension;i++)
+	{
+		//printf("Users: %s\n",client_response_smth);
+			if(logedin_user_sockets[i].socket!=client_socket)
+			{
+				strcat(activeUsers,", ");
+				strcat(activeUsers,logedin_user_sockets[i].name);
+			}
+	}
+
+	return activeUsers;
+
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int command(const char *client_response_smth,int client_socket)
 {
@@ -178,8 +234,29 @@ int command(const char *client_response_smth,int client_socket)
   {
       printf("Closing client socket\n");
       close(client_socket);
-      pthread_cancel(pthread_self());
+			int i=0;
+			for(;i<logedin_user_dimension;i++)
+			{
+				if(logedin_user_sockets[i].socket == client_socket)
+				{
+					break;
+				}
+			}
+
+			printf("[command]client_socket: %d   %d\n",logedin_user_sockets[i].socket, client_socket);
+			logedin_user_sockets[i] = logedin_user_sockets[logedin_user_dimension-1];
+			logedin_user_dimension--;
+			pthread_cancel(pthread_self());
   }
+	else if(strstr(client_response_smth,"listall"))
+	{
+
+		char *message = pack_message(listAll(client_socket),MESSAGE,"Server");
+    send(client_socket,message,strlen(message),0);
+    free(message);
+
+
+	}
 
   return SUCCESS;
 }
