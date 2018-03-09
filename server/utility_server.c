@@ -28,7 +28,7 @@ char * get_ip_port(int argv,char *argc[],int optiune)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-char ** extract_user_name_password(const char *client_response_smth,int n){
+char ** extract_user_name_password(const char *client_response_smth,int m){
 
   int i=0;
   char *password=(char *)malloc(sizeof(char)*50);
@@ -37,27 +37,31 @@ char ** extract_user_name_password(const char *client_response_smth,int n){
   memset(nume,0,50);
   int dimensiuneparola=0;
   int dimensiunenume=0;
+  int n=strlen(client_response_smth);
+
 	printf("[extract_user_name_password]tot mesajul-----%s\n",client_response_smth);
   for(;i<n;i++)
 	if(client_response_smth[i]=='-'&&i+1<n&&client_response_smth[i+1]=='u'){
 		int j=i+3;
-		for(;client_response_smth[j]!=' ';j++)
+		for(;client_response_smth[j]!=' '&&j<n;j++)
 			nume[dimensiunenume++]=client_response_smth[j];
 		i=j;
 
 	}
         else if(client_response_smth[i]=='-'&&i+1<n&&client_response_smth[i+1]=='p'){
 		int j=i+3;
-		for(;j<n;j++)
+		for(;client_response_smth[j]!='\0'&&j<n;j++)
 			password[dimensiuneparola++]=client_response_smth[j];
                 i=j;
 
 	}
 
   char **name_password=(char **)malloc(sizeof(char *)*2);
-
+  
   name_password[0]=nume;
   name_password[1]=password;
+
+  printf("ajung pana aicii\n");
 
   return name_password;
 
