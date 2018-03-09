@@ -28,9 +28,18 @@ void INThandler(int sig)
 }
 
 
+void print_header()
+{
+    printf("+**********************************************************************+\n");
+    printf("*                                 CHAT APP                             *\n");
+    printf("*                          Best Server VERSION EVER                    *\n");
+    printf("+**********************************************************************+\n\n\n");
+}
+
+
 int main(int argc,char *argv[])
 {
-
+    print_header();
     signal(SIGINT, INThandler);
     logedin_user_dimension=0;
 
