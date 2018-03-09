@@ -288,8 +288,11 @@ int command(const char *client_response_smth,int client_socket)
 			}
 
 			printf("[command]client_socket: %d   %d\n",logedin_user_sockets[i].socket, client_socket);
-			logedin_user_sockets[i] = logedin_user_sockets[logedin_user_dimension-1];
-			logedin_user_dimension--;
+                        if(logedin_user_dimension-1>=0)
+			{ 
+                         logedin_user_sockets[i] = logedin_user_sockets[logedin_user_dimension-1];
+			 logedin_user_dimension--;
+                        }
 			pthread_cancel(pthread_self());
   }
 	else if(strstr(client_response_smth,"listall"))
@@ -328,7 +331,8 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 				char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
 				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
 				logedin_user_dimension++;
-				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
+                                if(logedin_user_dimension-1>=0)
+				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name); 
 			}
 			return return_value;
 		}break;
@@ -342,6 +346,7 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 				char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
 				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
 				logedin_user_dimension++;
+                                if(logedin_user_dimension-1>=0)
 				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
 			}
 			return return_value_signup;
