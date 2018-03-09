@@ -67,7 +67,7 @@ char ** extract_user_name_password(const char *client_response_smth,int n){
 
 
 int isInFile(char **name_password){
-
+   /*
    FILE *fp;
    if((fp=fopen("./totallyLegitSecureUserDB.user","r"))==NULL){
 
@@ -84,7 +84,34 @@ int isInFile(char **name_password){
 	   return IS_REGISTERED;
 	}
    }
- close(fileno(fp));
+  close(fileno(fp));
+*/
+
+  FILE *fpbinar;
+  if((fpbinar=fopen("./totallyLegitSecureUserDb.user.bin","rb"))==NULL){
+
+	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
+           exit(1);
+        
+  }
+  
+  int nr=0;
+  char nume[50];
+  while((nr=fread(nume,40,1,fpbinar))!=0){
+
+	char password[50];
+        fread(password,40,1,fpbinar);
+        printf("afisare ---- %s %s\n",nume,password);
+        if(strcmp(nume,name_password[0])==0&&strcmp(password,name_password[1])==0){
+
+	   close(fileno(fpbinar));
+           return IS_REGISTERED;
+	}
+
+  }
+  close(fileno(fpbinar));
+
+
   return IS_NOT_REGISTERED;
 
 }
@@ -126,6 +153,15 @@ int signup(const char *client_response_smth,int n)
 	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
         exit(0);
   }
+
+  FILE * fpbinar;
+  if((fpbinar=fopen("./totallyLegitSecureUserDb.user.bin","ab"))==NULL){
+
+	printf(ANSI_COLOR_RED     "[signup]File binary could not be opened"     ANSI_COLOR_RESET "\n");
+        exit(0);
+
+  }
+
   if(isInFile(name_password)==IS_REGISTERED)
 	{
 		printf(ANSI_COLOR_YELLOW  "[signup]User already in DB"  ANSI_COLOR_RESET "\n");
@@ -134,8 +170,12 @@ int signup(const char *client_response_smth,int n)
  //printf("[signup]am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
   fprintf(fp, "%s %s\n",name_password[0],name_password[1]);
+  fwrite(name_password[0],40,1,fpbinar);
+  fwrite(name_password[1],40,1,fpbinar);
   fflush(fp);
   close(fileno(fp));
+  fflush(fpbinar);
+  close(fileno(fpbinar));
 
   return SIGNUP_SUCCESS;
 }

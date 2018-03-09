@@ -101,12 +101,14 @@ void message_loop(int socket)
            case 2:
            {
                 printf(ANSI_COLOR_RED     "Invalid credentials or username not found. Please try again"     ANSI_COLOR_RESET "\n");
-                menu(socket);
+		validator = 0;                
+		menu(socket);
            }
            
            case 3:
            {
                printf(ANSI_COLOR_RED     "Username is already taken. Try another"     ANSI_COLOR_RESET "\n");
+ 	       validator = 0;               
                menu(socket);
            }
         
