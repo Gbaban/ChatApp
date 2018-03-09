@@ -18,6 +18,7 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 int disconect_socket;
+extern int validator;
 
 void print_header();
 char *pack_message(char *message, unsigned char flags);

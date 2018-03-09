@@ -74,9 +74,36 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
 
     switch(header[1])
     {
-        case MESSAGE: { printf("[server_message_interpreter]mesaj: %s\n",server_message); break; } //mesaj
-        case LOGIN: { printf("[server_message_interpreter]login\n"); break; } //login
-        case SIGNUP: { printf("[server_message_interpreter]signup\n"); break; } //signup
+        case MESSAGE: 
+            { 
+                printf("[server_message_interpreter]mesaj: %s\n",server_message); break; 
+            } //mesaj
+        case LOGIN: 
+            { 
+                printf("[server_message_interpreter]login\n");
+                if (strstr(server_message,"1")) //LOGIN_SUCCESS
+		        {
+			        validator = 1;
+		        }
+		        else if (strstr(server_message,"2")) //LOGIN_FAIL
+		        {
+			        validator = 2;
+		        }
+		        break;
+            } //login
+        case SIGNUP: 
+            { 
+                printf("[server_message_interpreter]signup\n");
+                if (strstr(server_message,"3")) //SIGNUP_SUCCESS
+		        {
+			        validator = 1;
+		        }
+		        else if (strstr(server_message,"4")) //SIGNUP_FAIL
+		        {
+			        validator = 3;
+		        }
+		        break;
+            } //signup
         case COMMAND:
         {
           printf("[server_message_interpreter]comanda : %s\n", server_message);

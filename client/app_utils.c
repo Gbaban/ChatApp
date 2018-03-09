@@ -11,6 +11,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+int validator;
+
 void print_header()
 {
     printf("+**********************************************************************+\n");
@@ -58,34 +60,57 @@ void sendCommand()
 
 void message_loop(int socket)
 {
-    char message[256];
     while (1)
     {
-        fgets(message,sizeof(message),stdin);
-		message[strlen(message) - 1] = '\0';
-	if(strlen(message) == 0)
-	{
-		printf("No blank message\n");
-	} else
-  {
-        if (strchr(message,29))
+        switch (validator)
         {
-          printf("[message_loop]ctrl+]\n");
-          sendCommand();
-        }
-        else if (strlen(message) > 256)
-        {
-            printf(ANSI_COLOR_YELLOW     "Messages should be less than 256 characters"     ANSI_COLOR_RESET "\n");
-        }
-        else
-        {
-		         strcpy(message, pack_message(message, MESSAGE));
-             if (send(socket, message, strlen(message), 0) < 0)
-             {
-             	printf("[message_loop]Error sending message\n");
-             }
-        }
-    }
+            case 1:
+            {
+                char message[256];
+                while (1)
+                {
+                    fgets(message,sizeof(message),stdin);
+                    message[strlen(message) - 1] = '\0';
+                if(strlen(message) == 0)
+                {
+                    printf("No blank message\n");
+                } else
+              {
+                    if (strchr(message,29))
+                    {
+                      printf("[message_loop]ctrl+]\n");
+                      sendCommand();
+                    }
+                    else if (strlen(message) > 256)
+                    {
+                        printf(ANSI_COLOR_YELLOW     "Messages should be less than 256 characters"     ANSI_COLOR_RESET "\n");
+                    }
+                    else
+                    {
+                             strcpy(message, pack_message(message, MESSAGE));
+                         if (send(socket, message, strlen(message), 0) < 0)
+                         {
+                         	printf("[message_loop]Error sending message\n");
+                         }
+                    }
+                }
+              }
+              break;
+           }
+           
+           case 2:
+           {
+                printf(ANSI_COLOR_RED     "Invalid credentials or username not found. Please try again"     ANSI_COLOR_RESET "\n");
+                menu(socket);
+           }
+           
+           case 3:
+           {
+               printf(ANSI_COLOR_RED     "Username is already taken. Try another"     ANSI_COLOR_RESET "\n");
+               menu(socket);
+           }
+        
+        }   
   }
 }
 
@@ -187,7 +212,6 @@ void login(int socket)
     	printf("[login]Error sending message\n");
     }
 
-	//TODO check if logged in before entering chat room
     message_loop(socket);
 }
 
