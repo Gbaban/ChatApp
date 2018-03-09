@@ -251,6 +251,8 @@ int command(const char *client_response_smth,int client_socket)
 	else if(strstr(client_response_smth,"listall"))
 	{
 
+		printf("ListAll\n");
+
 		char *message = pack_message(listAll(client_socket),MESSAGE,"Server");
     send(client_socket,message,strlen(message),0);
     free(message);

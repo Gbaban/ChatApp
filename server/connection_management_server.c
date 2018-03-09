@@ -36,7 +36,7 @@ void *handle_connection(void *vargp)
     //printf("Sending message\n");
     send(client_socket,message,strlen(message),0);
     //printf("Message sent\n");
-    free(message);
+    //free(message);
     /*int i=0;
     for(;i<client_sockets_dimension;i++)*/
             //send(client_sockets[i],server_message,sizeof(server_message),0);
@@ -46,6 +46,8 @@ void *handle_connection(void *vargp)
 	//printf("First%s \n",client_response);
 	strcpy(client_response,"\0");
 	//printf("Second%s \n",client_response);
+
+
     char *client_response_smth;
     while(!close_connections)
     {
