@@ -39,7 +39,9 @@ char ** extract_user_name_password(const char *client_response_smth,int m){
   int dimensiunenume=0;
   int n=strlen(client_response_smth);
 
-	printf("[extract_user_name_password]tot mesajul-----%s\n",client_response_smth);
+	#ifdef DEBUG
+		printf("[extract_user_name_password]tot mesajul-----%s\n",client_response_smth);
+	#endif
   for(;i<n;i++)
 	if(client_response_smth[i]=='-'&&i+1<n&&client_response_smth[i+1]=='u'){
 		int j=i+3;
@@ -57,11 +59,13 @@ char ** extract_user_name_password(const char *client_response_smth,int m){
 	}
 
   char **name_password=(char **)malloc(sizeof(char *)*2);
-  
+
   name_password[0]=nume;
   name_password[1]=password;
 
-  printf("ajung pana aicii\n");
+	#ifdef DEBUG
+  	printf("ajung pana aicii\n");
+	#endif
 
   return name_password;
 
@@ -96,16 +100,18 @@ int isInFile(char **name_password){
 
 	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
            exit(1);
-        
+
   }
-  
+
   int nr=0;
   char nume[50];
   while((nr=fread(nume,40,1,fpbinar))!=0){
 
 	char password[50];
         fread(password,40,1,fpbinar);
-        printf("afisare ---- %s %s\n",nume,password);
+				#ifdef DEBUG
+        	printf("afisare ---- %s %s\n",nume,password);
+				#endif
         if(strcmp(nume,name_password[0])==0&&strcmp(password,name_password[1])==0){
 
 	   close(fileno(fpbinar));
@@ -237,9 +243,9 @@ char *pack_message(char *original_message, unsigned char flags, const char *send
 	}
   strcat(new_message,original_message);
 	new_message[0] = (unsigned char)strlen(new_message)-2;
-
-    printf("[pack_message]Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
-
+	#ifdef DEBUG
+		printf("[pack_message]Message: %d %d %s %s\n",new_message[0],new_message[1], new_message+2, original_message);
+	#endif
   return new_message;
 
 }
@@ -256,13 +262,21 @@ char *listAll(int client_socket)
 	int i;
 	for(;i<logedin_user_dimension;i++)
 	{
-		//printf("Users: %s\n",client_response_smth);
+	#ifdef DEBUG
+		printf("[listAll]Users: %s\n",logedin_user_sockets[i].name);
+	#endif
 			if(logedin_user_sockets[i].socket!=client_socket)
 			{
-				strcat(activeUsers,", ");
+
 				strcat(activeUsers,logedin_user_sockets[i].name);
+				strcat(activeUsers,", ");
+				#ifdef DEBUG
+				printf("[listAll]ActiveUsers: %s\n",activeUsers );
+				#endif
 			}
 	}
+
+	activeUsers[strlen(activeUsers)-2]=0;
 
 	return activeUsers;
 
@@ -286,19 +300,21 @@ int command(const char *client_response_smth,int client_socket)
 					break;
 				}
 			}
-
-			printf("[command]client_socket: %d   %d\n",logedin_user_sockets[i].socket, client_socket);
-                        if(logedin_user_dimension-1>=0)
-			{ 
-                         logedin_user_sockets[i] = logedin_user_sockets[logedin_user_dimension-1];
-			 logedin_user_dimension--;
-                        }
+			#ifdef DEBUG
+				printf("[command]client_socket: %d   %d\n",logedin_user_sockets[i].socket, client_socket);
+			#endif
+      if(logedin_user_dimension-1>=0)
+			{
+        logedin_user_sockets[i] = logedin_user_sockets[logedin_user_dimension-1];
+			 	logedin_user_dimension--;
+    	}
 			pthread_cancel(pthread_self());
   }
 	else if(strstr(client_response_smth,"listall"))
 	{
-
-		printf("ListAll\n");
+		#ifdef DEBUG
+			printf("ListAll\n");
+		#endif
 
 		char *message = pack_message(listAll(client_socket),MESSAGE,"Server");
     send(client_socket,message,strlen(message),0);
@@ -323,7 +339,9 @@ int messageInterpreter(const char client_header[2], const char *client_response_
   {
     case LOGIN:
 		{
-			printf("[messageInterpreter]This is a login\n");
+			#ifdef DEBUG
+				printf("[messageInterpreter]This is a login\n");
+			#endif
 			int return_value =  login(client_response_smth,client_header[0]);
 			if (return_value == LOGIN_SUCCESS)
 			{
@@ -332,13 +350,15 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
 				logedin_user_dimension++;
                                 if(logedin_user_dimension-1>=0)
-				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name); 
+				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
 			}
 			return return_value;
 		}break;
     case SIGNUP:
 		{
-			printf("[messageInterpreter]This is signup\n");
+			#ifdef DEBUG
+				printf("[messageInterpreter]This is signup\n");
+			#endif
 			int return_value_signup =  signup(client_response_smth,client_header[0]);
 			if (return_value_signup == SIGNUP_SUCCESS)
 			{
@@ -347,12 +367,21 @@ int messageInterpreter(const char client_header[2], const char *client_response_
 				strcpy(logedin_user_sockets[logedin_user_dimension].name,name_password[0]);
 				logedin_user_dimension++;
                                 if(logedin_user_dimension-1>=0)
-				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> loged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
+				printf("User <" ANSI_COLOR_BLUE     "%s" ANSI_COLOR_RESET "> logged in\n",logedin_user_sockets[logedin_user_dimension-1].name);
 			}
 			return return_value_signup;
 		}break;
-    case COMMAND: printf("[messageInterpreter]This is a command\n"); return command(client_response_smth,client_socket);break;
-    default: printf("[messageInterpreter]Unhandled header parameter\n");break;
+    case COMMAND:
+			#ifdef DEBUG
+				printf("[messageInterpreter]This is a command\n");
+			#endif
+			 return command(client_response_smth,client_socket);
+			 break;
+    default:
+			#ifdef DEBUG
+				printf("[messageInterpreter]Unhandled header parameter\n");
+			#endif
+			break;
   }
   return FAIL;
 }

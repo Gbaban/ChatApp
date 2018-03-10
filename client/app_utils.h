@@ -17,6 +17,8 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+//#define DEBUG
+
 int disconect_socket;
 extern int validator;
 

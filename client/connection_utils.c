@@ -74,31 +74,39 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
 
     switch(header[1])
     {
-        case MESSAGE: 
-            { 
-                printf("[server_message_interpreter]mesaj: %s\n",server_message); break; 
+        case MESSAGE:
+            {
+              #ifdef DEBUG
+                printf("[server_message_interpreter]mesaj: %s\n",server_message);
+              #endif
+              printf("%s\n",server_message);
+              break;
             } //mesaj
-        case LOGIN: 
-            { 
-                printf("[server_message_interpreter]login\n");
-                if (strstr(server_message,"1")) //LOGIN_SUCCESS
+        case LOGIN:
+            {
+                #ifdef DEBUG
+                  printf("[server_message_interpreter]login\n");
+                #endif
+                if (strstr(server_message,LOGIN_SUCCESS)) //LOGIN_SUCCESS
 		        {
 			        validator = 1;
 		        }
-		        else if (strstr(server_message,"2")) //LOGIN_FAIL
+		        else if (strstr(server_message,LOGIN_FAIL)) //LOGIN_FAIL
 		        {
 			        validator = 2;
 		        }
 		        break;
             } //login
-        case SIGNUP: 
-            { 
-                printf("[server_message_interpreter]signup\n");
-                if (strstr(server_message,"3")) //SIGNUP_SUCCESS
+        case SIGNUP:
+            {
+                #ifdef DEBUG
+                  printf("[server_message_interpreter]signup\n");
+                #endif
+                if (strstr(server_message,SIGNUP_SUCCESS)) //SIGNUP_SUCCESS
 		        {
 			        validator = 1;
 		        }
-		        else if (strstr(server_message,"4")) //SIGNUP_FAIL
+		        else if (strstr(server_message,SIGNUP_FAIL)) //SIGNUP_FAIL
 		        {
 			        validator = 3;
 		        }
@@ -106,10 +114,15 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
             } //signup
         case COMMAND:
         {
-          printf("[server_message_interpreter]comanda : %s\n", server_message);
+          #ifdef DEBUG
+            printf("[server_message_interpreter]comanda : %s\n", server_message);
+          #endif
           if(strstr(server_message,"-d"))
           {
-              printf("[server_message_interpreter]Closing socket\n");
+              #ifdef DEBUG
+                printf("[server_message_interpreter]Closing socket\n");
+              #endif
+              printf("Closing socket\n");
               disconnect_client(0);
           }
 
@@ -141,8 +154,10 @@ void* listen_to_server(void *void_arg)
         }
         else{
 	         server_message[header[0]] = 0;
-           printf("[listen_to_server]Header %d %d\n",header[0],header[1]);
-           printf("[listen_to_server]Response: %s\n", server_message);
+           #ifdef DEBUG
+            printf("[listen_to_server]Header %d %d\n",header[0],header[1]);
+            printf("[listen_to_server]Response: %s\n", server_message);
+           #endif
         server_message_interpreter(server_message,header);
         strcpy(server_message,"");
       }

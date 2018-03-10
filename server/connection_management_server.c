@@ -30,7 +30,9 @@ void *handle_connection(void *vargp)
     //trimite raspunsul la toate socket-urile---de avut grija cand clientul va functiona
     //sa nu mai trimitem inapoi mesajul si acelui client care l-a trimis
     //ca va fi afisat in consola lui de 2 ori
-    printf(ANSI_COLOR_BLUE    "The client sent the following data here: %s %d"    ANSI_COLOR_RESET "\n",client_response,logedin_user_dimension);
+    #ifdef DEBUG
+      printf(ANSI_COLOR_BLUE    "The client sent the following data here: %s"    ANSI_COLOR_RESET ,client_response);
+    #endif
     //sprintf(server_message,"%s %d\n",server_message,nr);
     char *message = pack_message("You have reached the server!",MESSAGE,"Server");
     //printf("Sending message\n");
@@ -51,81 +53,73 @@ void *handle_connection(void *vargp)
     char *client_response_smth;
     while(!close_connections)
     {
-	client_response_smth = (char*)malloc(257);
-          if (recv(client_socket,client_header,2,0) < 2)
+	     client_response_smth = (char*)malloc(257);
+       if (recv(client_socket,client_header,2,0) < 2)
         {
                 printf(ANSI_COLOR_RED     "[handle_connection]Error recieving data from client"     ANSI_COLOR_RESET "\n");
                 exit(1);
         }
-        else if ((recv(client_socket,client_response_smth,client_header[0],MSG_WAITALL) < client_header[0]))
+       else if ((recv(client_socket,client_response_smth,client_header[0],MSG_WAITALL) < client_header[0]))
         {
                 printf(ANSI_COLOR_RED     "[handle_connection]Error recieving data from client"     ANSI_COLOR_RESET "\n");
                 //exit(1);
         }
-        else
+       else
         {
-	  client_response_smth[client_header[0]] = 0;
-          printf("[handle_connection]Header %d %d\n",client_header[0],client_header[1]);
-          printf("[handle_connection]Response: %s\n", client_response_smth);
+          client_response_smth[client_header[0]] = 0;
+        	#ifdef DEBUG
+              printf("[handle_connection]Header %d %d\n",client_header[0],client_header[1]);
+              printf("[handle_connection]Response: %s\n", client_response_smth);
+          #endif
 
 
-    //printf("Header compare:%d %d %d\n",client_header[1], MESSAGE, client_header[1] == MESSAGE);
-    if(client_header[1] == MESSAGE)
-    {
-    	  int i=0;
-              char *message1 = NULL;
-              char *sender = getUsernameBySocket(client_socket);
-              message1=pack_message(client_response_smth,MESSAGE,sender);
-              for(;i<logedin_user_dimension;i++)
-           	  {
-                //printf("Users: %s\n",client_response_smth);
-              		if(logedin_user_sockets[i].socket!=client_socket)
-              		{
-                    //printf("Message1: %s\n",message1+2);
-              		  if(	send(logedin_user_sockets[i].socket,message1,strlen(message1),0) < strlen(message1)  )
-                    {
-                      printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
-                    }
-              			printf("----");
-              		}
-    	        }
-    }
-    else
-    {
-      //printf("messageInterpreter\n");
-      char *return_value = (char*)malloc(258);
-      if(!return_value)
-      {
-        printf(ANSI_COLOR_RED     "Malloc error"     ANSI_COLOR_RESET "\n");
-        exit(3);
-      }
+          //printf("Header compare:%d %d %d\n",client_header[1], MESSAGE, client_header[1] == MESSAGE);
+          if(client_header[1] == MESSAGE)
+          {
+          	  int i=0;
+                    char *message1 = NULL;
+                    char *sender = getUsernameBySocket(client_socket);
+                    message1=pack_message(client_response_smth,MESSAGE,sender);
+                    for(;i<logedin_user_dimension;i++)
+                 	  {
+                      //printf("Users: %s\n",client_response_smth);
+                    		if(logedin_user_sockets[i].socket!=client_socket)
+                    		{
+                          //printf("Message1: %s\n",message1+2);
+                    		  if(	send(logedin_user_sockets[i].socket,message1,strlen(message1),0) < strlen(message1)  )
+                          {
+                            printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
+                          }
+                    			printf("----");
+                    		}
+          	        }
+          }
+          else
+          {
+            //printf("messageInterpreter\n");
+            char *return_value = (char*)malloc(258);
+            if(!return_value)
+            {
+              printf(ANSI_COLOR_RED     "Malloc error"     ANSI_COLOR_RESET "\n");
+              exit(3);
+            }
 
-      int return_value_int = messageInterpreter(client_header,client_response_smth,client_socket);
+            int return_value_int = messageInterpreter(client_header,client_response_smth,client_socket);
 
-      sprintf(return_value,"%d",return_value_int);
-      return_value = pack_message(return_value,client_header[1],NULL);
-      send(client_socket,return_value,strlen(return_value),0);
-      //free(return_value);
-    }
+            if(return_value_int != SUCCESS)
+            {
+              sprintf(return_value,"%d",return_value_int);
+              return_value = pack_message(return_value,client_header[1],NULL);
+              send(client_socket,return_value,strlen(return_value),0);
+            }
+            //free(return_value);
+          }
 
-	  free(client_response_smth);
+	         free(client_response_smth);
 
         }
 
     }
-    /*char *close_message = pack_message("-d",COMMAND);
-    printf("Sending...\n");
-    if(send(client_socket,close_message,strlen(close_message),0) <0)
-    {
-      printf("Error on send\n");
-    }
-    printf("Sent...\n");
-    close(client_socket);*/
-
-  //  free(message);
-
-
-
     return NULL;
 }
 
@@ -137,13 +131,16 @@ void close_all_connections()
   char *close_message = pack_message("-d",COMMAND,NULL);
   for(i=0;i<logedin_user_dimension;i++)
   {
-    //printf("[close_all_connections]Sending...\n");
+    #ifdef DEBUG
+      printf("[close_all_connections]Sending...\n");
+    #endif
     if(send(logedin_user_sockets[i].socket,close_message,strlen(close_message),0) <0)
     {
       printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
     }
-    //printf("[close_all_connections]Sent...\n");
-    //close(client_sockets[i]);
+    #ifdef DEBUG
+      printf("[close_all_connections]Sent...\n");
+    #endif
   }
 
   free(close_message);
@@ -173,21 +170,6 @@ void manage_multiple_connections(int server_socket)
             printf(ANSI_COLOR_RED     "[manage_multiple_connections]Error accepting client socket"     ANSI_COLOR_RESET "\n");
             exit(0);
         }
-
-        //pastrarea tuturor clientilor
-      /*  client_sockets[client_sockets_dimension]=client_socket;
-        client_sockets_dimension++;
-        int index;
-        for(index = 0; index < client_sockets_dimension;i++)
-        {
-          if(!client_sockets[index])
-          {
-              client_sockets[index] = client_sockets[client_sockets_dimension-1];
-              client_sockets_dimension--;
-          }
-        }*/
-        /////////////////////////////////////////////////////////////
-
 
         //initializare threads
         pthread_t tid;

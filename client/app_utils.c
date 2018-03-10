@@ -40,9 +40,9 @@ char *pack_message(char *message,unsigned char flags ){
 void sendCommand()
 {
     char command[256];
-    
+
     scanf("%255s",command);
-    
+
     if (!strcmp(command,"listall"))
     {
         if(send(disconect_socket,pack_message(command,COMMAND),strlen(pack_message(command,COMMAND)),0) < 0)
@@ -54,7 +54,7 @@ void sendCommand()
     {
         printf(ANSI_COLOR_RED     "[sendCommand]Invalid command"     ANSI_COLOR_RESET "\n");
     }
-    
+
     //can be extended to further commands
 }
 
@@ -73,13 +73,19 @@ void message_loop(int socket)
                     message[strlen(message) - 1] = '\0';
                 if(strlen(message) == 0)
                 {
-                    printf("No blank message\n");
+                    #ifdef DEBUG
+                      printf("No blank message\n");
+                    #endif
                 } else
               {
                     if (strchr(message,29))
                     {
-                      printf("[message_loop]ctrl+]\n");
+                      #ifdef DEBUG
+                        printf("[message_loop]ctrl+]\n");
+                      #endif
+                        printf(ANSI_COLOR_CYAN "Command\n");
                       sendCommand();
+                        printf(ANSI_COLOR_RESET);
                     }
                     else if (strlen(message) > 256)
                     {
@@ -97,22 +103,22 @@ void message_loop(int socket)
               }
               break;
            }
-           
+
            case 2:
            {
                 printf(ANSI_COLOR_RED     "Invalid credentials or username not found. Please try again"     ANSI_COLOR_RESET "\n");
-		validator = 0;                
+		validator = 0;
 		menu(socket);
            }
-           
+
            case 3:
            {
                printf(ANSI_COLOR_RED     "Username is already taken. Try another"     ANSI_COLOR_RESET "\n");
- 	       validator = 0;               
+ 	       validator = 0;
                menu(socket);
            }
-        
-        }   
+
+        }
   }
 }
 
