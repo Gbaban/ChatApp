@@ -20,12 +20,13 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
-
+#define SIGNUP_FILE 1
+#define LOGIN_FILE 2
 // #define DEBUG
 
 char * get_ip_port(int argv,char *argc[],int optiune);
 char ** extract_user_name_password(const char *client_response_smth,int n);
-int isInFile(char **name_password);
+int isInFile(char **name_password,int option);
 int login(const char *client_response_smth,int n);
 int signup(const char *client_response_smth,int n);
 char *pack_message(char *original_message,unsigned char flags, const char *sender);
