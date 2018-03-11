@@ -90,7 +90,7 @@ void *handle_connection(void *vargp)
                           {
                             printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
                           }
-                    			printf("----");
+                    			//printf("----");
                     		}
           	        }
           }

@@ -1,16 +1,5 @@
 #include "app_utils.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#include <sys/types.h>
-#include <sys/socket.h>
-
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
 int validator;
 
 void print_header()
@@ -27,12 +16,19 @@ char *pack_message(char *message,unsigned char flags ){
 	char message_length;
 	message_length = strlen(message);
 
+  #ifdef DEBUG
+    	printf("initial:%s\n",message);
+  #endif
+
 	char *final_message = (char *) malloc(258);
 	final_message[0] = message_length;
-    	final_message[1] = flags;
+  final_message[1] = flags;
+  final_message[2] = 0;
 
 	strcat(final_message,message);
-    	//printf("final: %d %d %s\n",final_message[0],flags,final_message+2);
+  #ifdef DEBUG
+    	printf("final: %d  %d  %s\n\n\n",final_message[0],flags,final_message);
+  #endif
 
 	return final_message;
 }
@@ -125,8 +121,8 @@ void message_loop(int socket)
 void signup(int socket)
 {
     char username[30];
-    char password[30];
-    char repeated_password[30];
+    char *password;
+    char *repeated_password;
 
     do
     {
@@ -140,9 +136,13 @@ void signup(int socket)
 
     do
     {
-        printf("Password: ");
-        scanf("%99s",password);
-        if (strlen(username) >= 30)
+        //printf("Password: ");
+        //scanf("%99s",password);
+        password = getpass("Password: ");
+        #ifdef DEBUG
+          printf("Password: %s\n", password);
+        #endif
+        if (strlen(password) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
@@ -150,9 +150,13 @@ void signup(int socket)
 
     do
     {
-        printf("Repeat password: ");
-        scanf("%99s",repeated_password);
-        if (strlen(username) >= 30)
+        //printf("Repeat password: ");
+        //scanf("%99s",repeated_password);
+        repeated_password = getpass("Repeat password: ");
+        #ifdef DEBUG
+          printf("Repeated_password: %s\n", repeated_password);
+        #endif
+        if (strlen(repeated_password) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
@@ -166,7 +170,7 @@ void signup(int socket)
 		strcat(signup_message, " -p ");
 		strcat(signup_message, password);
 		strcpy(signup_message, pack_message(signup_message, SIGNUP));
-    //printf("Sending.......\n");
+
         if (send(socket, signup_message, strlen(signup_message), 0) < 0)
         {
              	printf("[signup]Error sending message\n");
@@ -185,7 +189,8 @@ void signup(int socket)
 void login(int socket)
 {
     char username[30];
-    char password[30];
+    char *password;
+    // char password_new[30];
 
     do
     {
@@ -199,9 +204,14 @@ void login(int socket)
 
     do
     {
-        printf("Password: ");
-        scanf("%99s",password);
-        if (strlen(username) >= 30)
+        // printf("Password: ");
+        // scanf("%99s",password);
+        password = getpass("Password: ");
+        #ifdef DEBUG
+          printf("Password: %s\n", password);
+        #endif
+        // strcpy(password_new,password);
+        if (strlen(password) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
@@ -214,7 +224,7 @@ void login(int socket)
 	strcat(login_message, " -p ");
 	strcat(login_message, password);
 	strcpy(login_message, pack_message(login_message, LOGIN));
-
+  // printf("Credentials: %s\n",login_message);
     if(send(socket, login_message, strlen(login_message), 0) < 0)
     {
     	printf("[login]Error sending message\n");

@@ -21,7 +21,7 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-//#define DEBUG
+// #define DEBUG
 
 char * get_ip_port(int argv,char *argc[],int optiune);
 char ** extract_user_name_password(const char *client_response_smth,int n);

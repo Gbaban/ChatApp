@@ -90,10 +90,12 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
                 if (strstr(server_message,LOGIN_SUCCESS)) //LOGIN_SUCCESS
 		        {
 			        validator = 1;
+              printf(ANSI_COLOR_GREEN     "Login was succesfull"     ANSI_COLOR_RESET "\n");
 		        }
 		        else if (strstr(server_message,LOGIN_FAIL)) //LOGIN_FAIL
 		        {
 			        validator = 2;
+              printf(ANSI_COLOR_RED    "No such user"     ANSI_COLOR_RESET "\n");
 		        }
 		        break;
             } //login
@@ -105,10 +107,12 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
                 if (strstr(server_message,SIGNUP_SUCCESS)) //SIGNUP_SUCCESS
 		        {
 			        validator = 1;
+              printf(ANSI_COLOR_GREEN     "Signup was succesfull"     ANSI_COLOR_RESET "\n");
 		        }
 		        else if (strstr(server_message,SIGNUP_FAIL)) //SIGNUP_FAIL
 		        {
 			        validator = 3;
+              printf(ANSI_COLOR_RED    "Username already usead"     ANSI_COLOR_RESET "\n");
 		        }
 		        break;
             } //signup
