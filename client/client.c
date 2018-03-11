@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 
 
-    menu(tid,network_socket);
+    menu(tid, network_socket);
 
     pthread_join(tid,NULL);
 

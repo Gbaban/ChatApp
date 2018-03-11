@@ -1,4 +1,6 @@
 #include "app_utils.h"
+#include <ctype.h>
+#include <string.h>
 
 int validator;
 
@@ -255,23 +257,28 @@ void disconnect_client(int sig)
 
 void menu(pthread_t tid, int socket)
 {
-    int input;
+    char input[10];
     do
     {
         printf("1 - Sign Up\n");
         printf("2 - Login\n");
         printf("0 - Exit\n\n");
         printf("Enter input: ");
-        scanf("%d", &input);
-
-        switch (input)
-        {
-            case 1: { signup(socket);break; }
-            case 2: { login(socket);break; }
-            case 0: { disconnect_client(socket); break; }
-            default: { printf("\n" ANSI_COLOR_RED     "ERROR: Invalid input!"     ANSI_COLOR_RESET "\n"); }
-        }
-    } while (input != 0);
+        scanf("%s", input);
+		if(strlen(input) == 1 && isdigit(input[0]) && atoi(input) >= 0 && atoi(input) <= 2){
+			
+		    switch (input[0])
+		    {
+		        case '1': { signup(socket);break; }
+		        case '2': { login(socket);break; }
+		        case '0': { disconnect_client(socket); break; }
+		        default: { printf("\n" ANSI_COLOR_RED     "ERROR: Invalid input!"     ANSI_COLOR_RESET "\n"); }
+		    }
+		}
+		else{
+			printf("\n"	ANSI_COLOR_RED		"Not a valid input"		ANSI_COLOR_RESET	"\n");
+		}
+    } while (strcmp(input, "0") != 0);
 }
 
 
