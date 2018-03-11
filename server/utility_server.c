@@ -96,7 +96,7 @@ int isInFile(char **name_password){
 */
 
   FILE *fpbinar;
-  if((fpbinar=fopen("./totallyLegitSecureUserDb.user.bin","rb"))==NULL){
+  if((fpbinar=fopen("./totallyLegitSecureUserDB.user.bin","rb"))==NULL){
 
 	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
            exit(1);

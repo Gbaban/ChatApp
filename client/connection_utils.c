@@ -98,7 +98,7 @@ void server_message_interpreter(char *server_message, unsigned char header[2])
               printf(ANSI_COLOR_RED    "No such user"     ANSI_COLOR_RESET "\n");
 		        }
 		        break;
-            } //login
+          } //logins
         case SIGNUP:
             {
                 #ifdef DEBUG
