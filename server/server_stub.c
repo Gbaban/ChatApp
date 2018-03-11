@@ -39,7 +39,7 @@ void print_header()
 
 int main(int argc,char *argv[])
 {
-    print_header();
+
     signal(SIGINT, INThandler);
     logedin_user_dimension=0;
 
@@ -76,6 +76,8 @@ int main(int argc,char *argv[])
         exit(0);
     }
     ////////////////////////////////////////////////////////////////////////////////////
+
+    print_header();
 
 
     //listen for connections

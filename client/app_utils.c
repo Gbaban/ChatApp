@@ -58,6 +58,10 @@ void message_loop(int socket)
 {
     while (1)
     {
+      // #ifdef DEBUG
+        // printf("[message_loop]validator: %d",validator);
+      // #endif
+
         switch (validator)
         {
             case 1:
@@ -103,15 +107,15 @@ void message_loop(int socket)
            case 2:
            {
                 printf(ANSI_COLOR_RED     "Invalid credentials or username not found. Please try again"     ANSI_COLOR_RESET "\n");
-		validator = 0;
-		menu(socket);
+		            validator = 0;
+                return;
            }
 
            case 3:
            {
                printf(ANSI_COLOR_RED     "Username is already taken. Try another"     ANSI_COLOR_RESET "\n");
- 	       validator = 0;
-               menu(socket);
+ 	             validator = 0;
+               return;
            }
 
         }
@@ -120,14 +124,15 @@ void message_loop(int socket)
 
 void signup(int socket)
 {
-    char username[30];
+    char username[31];
     char *password;
-    char *repeated_password;
+    char password_aux[31];
+
 
     do
     {
         printf("Username: ");
-        scanf("%99s",username);
+        scanf("%30s",username);
         if (strlen(username) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Username should be less than 30 characters"     ANSI_COLOR_RESET "\n");
@@ -148,21 +153,23 @@ void signup(int socket)
         }
     } while (strlen(password) >= 30);
 
+    strcpy(password_aux,password);
+
     do
     {
         //printf("Repeat password: ");
         //scanf("%99s",repeated_password);
-        repeated_password = getpass("Repeat password: ");
+        password = getpass("Repeat password: ");
         #ifdef DEBUG
-          printf("Repeated_password: %s\n", repeated_password);
+          printf("Repeated_password: %s\n", password);
         #endif
-        if (strlen(repeated_password) >= 30)
+        if (strlen(password) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
         }
-    } while (strlen(repeated_password) >= 30);
+    } while (strlen(password) >= 30);
 
-    if (!strcmp(password,repeated_password))
+    if (strcmp(password_aux,password) == 0)
     {
 		char signup_message[256] = "";
 		strcat(signup_message, "-u ");
@@ -180,6 +187,7 @@ void signup(int socket)
     else
     {
         printf(ANSI_COLOR_YELLOW     "The repeated password must be identical to the original!"     ANSI_COLOR_RESET "\n");
+        return;
     }
 
 	fflush(stdin);
@@ -188,14 +196,13 @@ void signup(int socket)
 
 void login(int socket)
 {
-    char username[30];
+    char username[31];
     char *password;
-    // char password_new[30];
 
     do
     {
         printf("Username: ");
-        scanf("%99s",username);
+        scanf("%30s",username);
         if (strlen(username) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Username should be less than 30 characters"     ANSI_COLOR_RESET "\n");
@@ -204,13 +211,11 @@ void login(int socket)
 
     do
     {
-        // printf("Password: ");
-        // scanf("%99s",password);
         password = getpass("Password: ");
         #ifdef DEBUG
           printf("Password: %s\n", password);
         #endif
-        // strcpy(password_new,password);
+
         if (strlen(password) >= 30)
         {
             printf(ANSI_COLOR_YELLOW     "Password should be less than 30 characters"     ANSI_COLOR_RESET "\n");
@@ -224,7 +229,6 @@ void login(int socket)
 	strcat(login_message, " -p ");
 	strcat(login_message, password);
 	strcpy(login_message, pack_message(login_message, LOGIN));
-  // printf("Credentials: %s\n",login_message);
     if(send(socket, login_message, strlen(login_message), 0) < 0)
     {
     	printf("[login]Error sending message\n");
@@ -262,8 +266,8 @@ void menu(pthread_t tid, int socket)
 
         switch (input)
         {
-            case 1: { signup(socket); input = 0; break; }
-            case 2: { login(socket); input = 0; break; }
+            case 1: { signup(socket);break; }
+            case 2: { login(socket);break; }
             case 0: { disconnect_client(socket); break; }
             default: { printf("\n" ANSI_COLOR_RED     "ERROR: Invalid input!"     ANSI_COLOR_RESET "\n"); }
         }

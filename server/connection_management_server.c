@@ -51,7 +51,7 @@ void *handle_connection(void *vargp)
 
 
     char *client_response_smth;
-    while(!close_connections)
+    while(1)
     {
 	     client_response_smth = (char*)malloc(257);
        if (recv(client_socket,client_header,2,0) < 2)
@@ -112,6 +112,27 @@ void *handle_connection(void *vargp)
               return_value = pack_message(return_value,client_header[1],NULL);
               send(client_socket,return_value,strlen(return_value),0);
             }
+            if(return_value_int == LOGIN_SUCCESS || return_value_int == SIGNUP_SUCCESS)
+            {
+              char *login_message = NULL;
+              // char *sender = getUsernameBySocket(client_socket);
+              char **name_password=extract_user_name_password(client_response_smth,client_header[0]);
+              char aux_message[50];
+              sprintf(aux_message,"%s in now connected",name_password[0]);
+              login_message=pack_message(aux_message,MESSAGE,"Server");
+              int j;
+              for(;j<logedin_user_dimension;j++)
+              {
+                  if(logedin_user_sockets[j].socket!=client_socket)
+                  {
+                    if(	send(logedin_user_sockets[j].socket,login_message,strlen(login_message),0) < strlen(login_message)  )
+                    {
+                      printf(ANSI_COLOR_RED     "[handle_connection]Error on send"     ANSI_COLOR_RESET "\n");
+                    }
+                  }
+              }
+
+            }
             //free(return_value);
           }
 
@@ -120,6 +141,9 @@ void *handle_connection(void *vargp)
         }
 
     }
+    #ifdef DEBUG
+      printf("[handle_connection]return\n");
+    #endif
     return NULL;
 }
 
