@@ -167,13 +167,7 @@ int signup(const char *client_response_smth,int n)
 {
 
   char **name_password=extract_user_name_password(client_response_smth,n);
-  FILE * fp;
-  if((fp = fopen ("./totallyLegitSecureUserDB.user", "a+"))==NULL){
-
-	printf(ANSI_COLOR_RED     "[signup]File could not be opened"     ANSI_COLOR_RESET "\n");
-        exit(0);
-  }
-
+  
   FILE * fpbinar;
   if((fpbinar=fopen("./totallyLegitSecureUserDB.user.bin","ab"))==NULL){
 
@@ -189,11 +183,9 @@ int signup(const char *client_response_smth,int n)
 	}
  //printf("[signup]am ajns aicici %s %s \n",name_password[0],name_password[1]);
 
-  fprintf(fp, "%s %s\n",name_password[0],name_password[1]);
+  
   fwrite(name_password[0],40,1,fpbinar);
   fwrite(name_password[1],40,1,fpbinar);
-  fflush(fp);
-  close(fileno(fp));
   fflush(fpbinar);
   close(fileno(fpbinar));
 
