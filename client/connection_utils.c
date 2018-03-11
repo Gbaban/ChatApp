@@ -12,11 +12,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define ADDRESS "192.168.0.102"
 
 
 
-int setup_socket(int port)
+
+int setup_socket(int port,const char *address)
 {
 
     //printf("Setup_socket\n");
@@ -31,8 +31,8 @@ int setup_socket(int port)
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
-    //server_address.sin_addr.s_addr = inet_addr(ADDRESS); //use when we actually get an IP
-    server_address.sin_addr.s_addr = INADDR_ANY; //use for debug purposes
+    server_address.sin_addr.s_addr = inet_addr(address); //use when we actually get an IP
+    //server_address.sin_addr.s_addr = INADDR_ANY; //use for debug purposes
 
     if (connect(network_socket,(struct sockaddr *) &server_address,sizeof(server_address)) < 0)
     {
