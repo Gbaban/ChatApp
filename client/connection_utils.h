@@ -9,7 +9,7 @@
 #define SIGNUP_FAIL "4"
 #define SUCCESS 254
 
-int setup_socket(int port);
+int setup_socket(int port,const char *address);
 void server_message_interpreter(char *server_message,unsigned char header[2]);
 void* listen_to_server(void *void_arg);
 

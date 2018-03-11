@@ -15,6 +15,7 @@
 #include "app_utils.h"
 
 #define PORT 9002
+#define ADDRESS "127.0.0.1"
 
 int main(int argc, char *argv[])
 {
@@ -23,10 +24,30 @@ int main(int argc, char *argv[])
 
     char * port=get_ip_port(argc,argv,GET_PORT);
     print_header();
+    char * ip=get_ip_port(argc,argv,GET_IP);
     if(port!=NULL)
-        network_socket = setup_socket(atoi(port));
+    {
+      if(ip!=NULL)
+      {
+        network_socket =  setup_socket(atoi(port),ip);
+      }
+      else
+      {
+        network_socket =setup_socket(atoi(port),ADDRESS);
+      }
+    }
     else
-        network_socket = setup_socket(PORT);
+    {
+      if(ip!=NULL)
+      {
+        network_socket =  setup_socket(PORT,ip);
+      }
+      else
+      {
+        network_socket =setup_socket(PORT,ADDRESS);
+      }
+
+    }
 
     disconect_socket = network_socket;
 
